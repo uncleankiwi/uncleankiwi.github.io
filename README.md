@@ -1,4 +1,0 @@
-<html>
-  <head></head>
-  <body><p>3</p></body>
-</html>
