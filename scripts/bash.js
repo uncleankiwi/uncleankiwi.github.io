@@ -9,7 +9,9 @@ let user= 'user@uncleankiwi.github.io';
 let path = '~'
 const directory = new Map([
 	["gurgle", someFunction],
-	["suso", someOtherFunc]]);
+	["suso", someOtherFunc]
+	// ,["test", runGurgle]
+	]);
 //
 
 document.addEventListener('load', () => {
@@ -37,12 +39,11 @@ function onKeyUp(e) {
 //Decorates the input line plus prefix (username and all), then appends log with it.
 function printLine(str) {
 	if (rowsFilled >= MAX_LINES) {
-		for (let i = 1; i < rowsFilled; i++) {
+		for (let i = 1; i < MAX_LINES; i++) {
 			log[i - 1] = log[i];
 		}
 		rowsFilled = MAX_LINES;
-		log[rowsFilled] = str;
-
+		log[rowsFilled - 1] = str;
 	}
 	else {
 		log[rowsFilled] = str;
@@ -60,12 +61,14 @@ function someFunction(str) {
 
 // export const printer = (s) => {printLine(s)};
 
+//Run the function stored in the map if the key matches.
 function evaluate(command) {
 	if (directory.has(command)) {
 		directory.get(command)(currentInput);
 	}
 	else {
 		printLine(currentInput + ': command not found');
+		// printer("hi");
 	}
 }
 
