@@ -1,4 +1,4 @@
-import {Application, ApplicationState} from "./helpers.js";
+import {Application, ApplicationState, wrapColour} from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
 const MMState = Object.freeze({
@@ -139,17 +139,17 @@ export class mm extends Application {
 
 	titleString = "Press Enter to begin, or 'q' to quit."
 	setupStringPossibleColours = "Enter 'd' to start with default settings, " +
-		"or enter a number from 1-9 for the number of possible different tokens at each location. " +
-		"(Default: 4)'";
-	setupStringChances = "Enter a number from 1-20 for the number of tries you get. " +
+		"or enter a number from 1-9 for the number of token types. " +
+		"(Default: 4)";
+	setupStringChances = "Enter a number from 1-20 for the number of tries. " +
 		"(Default: 6)";
-	setupStringPlaces = "Enter a number from 1-9 for the number of tokens you have to guess. " +
+	setupStringPlaces = "Enter a number from 1-9 for the number of tokens. " +
 		"(Default: 4)";
 	inProgressString1 = "Enter ";	//+ this.gameData.places
-	inProgressString2 = " numbers from 1 to " // + this.gameData.colours
-	inProgressString3 = " as your next guess: ";
-	winString = "You win!";
-	loseString = "You lose...";
+	inProgressString2 = " digits from 1 to " // + this.gameData.colours
+	inProgressString3 = " : ";
+	winString = wrapColour("You win!", "#55cf88");
+	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 
 	constructor() {
@@ -176,6 +176,12 @@ export class mm extends Application {
 				}
 				break;
 			case MMState.CHOOSE_COLOURS:
+				if (command === 'd') {
+					this.gameData.pickNumbers();
+					this.gameState = MMState.IN_PROGRESS;
+					clearLog();
+					return;
+				}
 				let x = parseInt(command);
 				if (x >= this.gameData.minColours && x <= this.gameData.maxColours) {
 					this.gameData.colours = x;
@@ -210,10 +216,11 @@ export class mm extends Application {
 				if (this.gameData.won || this.gameData.lost) {
 					this.gameState = MMState.DONE;
 				}
-				printLine(this.gameData.attempts[this.gameData.attemptCount - 1] +
-					" Grade: " + this.gameData.grades[this.gameData.attemptCount - 1] +
-					" Chances left: " + this.gameData.chancesLeft());
-				printLine(this.gameData.answer + " <- answer");
+				// printLine(this.gameData.attempts[this.gameData.attemptCount - 1] +
+				// 	" Grade: " + this.gameData.grades[this.gameData.attemptCount - 1] +
+				// 	" Chances left: " + this.gameData.chancesLeft());
+				clearLog();
+				this.printState();
 				break;
 			case MMState.DONE:
 				clearLog();
@@ -250,7 +257,6 @@ export class mm extends Application {
 					output += this.winString;
 				}
 				else if (this.gameData.lost) {
-					printLine("Answer: " + this.gameData.answer);
 					output += this.loseString;
 				}
 				return output + " " + this.nextGameString;
@@ -262,7 +268,57 @@ export class mm extends Application {
 	//Print out all attempts so far and their grade, plus the attemptsCount at the bottom.
 	printState() {
 		for (let i = 0; i < this.gameData.attemptCount; i++) {
+			let row = "";
+			let attempt = this.gameData.attempts[i];
+			let grade = this.gameData.grades[i];
+			for (let j = 0; j < attempt.length; j++) {
+				row += this.wrapToken(attempt[j]) + " ";
+			}
 
+			row += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			if (grade === null) {
+				row += "Invalid input";
+			}
+			else {
+				row += grade[0] + "✓ " + grade[1] + "×"
+			}
+			printLine(row);
+		}
+		let strStats = this.gameData.chancesLeft() + " chances left.";
+		if (this.gameData.lost) {
+			strStats +=	" Answer: " + this.gameData.answer;
+		}
+		printLine(strStats);
+	}
+
+	wrapToken(k) {
+		return wrapColour(k, this.colourFromNumber(k));
+	}
+
+	colourFromNumber(k) {
+		switch (k) {
+			case 1:
+				return "#aaaa55";
+			case 2:
+				return "#aa55aa";
+			case 3:
+				return "#55aaaa";
+			case 4:
+				return "#55aa55";
+			case 5:
+				return "#aa5555";
+			case 6:
+				return "#5555aa";
+			case 7:
+				return "#ff00aa";
+			case 8:
+				return "#aaff00";
+			case 9:
+				return "#00aaff";
+			default:
+				return "#555555";
 		}
 	}
+
+
 }
