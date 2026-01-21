@@ -1,5 +1,5 @@
 import {Application, ApplicationState} from "./helpers.js";
-import {clearLog, drawLog, printLine} from "./bash.js";
+import {clearLog, printLine} from "./bash.js";
 
 const MMState = Object.freeze({
 	TITLE: 0,
@@ -26,7 +26,6 @@ class GameData {
 	attemptCount = 0;
 	attempts = [];	//Holds the attempts; each attempt is also a [];
 	grades = [];	//Holds the grades for each attempt; each grade is also a [];
-	toClearLog = true;	//Should the log be cleared before asking the user for their first guess?
 
 	constructor() {
 	}
@@ -53,7 +52,16 @@ class GameData {
 			else {
 				//Put the character in and skip any spaces.
 				if (inputString.charAt(stringIndex) !== ' ') {
-					output[arrIndex] = parseInt(inputString.charAt(stringIndex));	//todo ?
+					let k = parseInt(inputString.charAt(stringIndex));
+					if (Number.isNaN(k)) {
+						output[arrIndex] = inputString.charAt(stringIndex);
+					}
+					else {
+						output[arrIndex] = k;
+					}
+				}
+				else {
+					arrIndex--;
 				}
 				stringIndex++;
 			}
@@ -74,7 +82,7 @@ class GameData {
 		let correctColour = 0;
 		for (let i = 0; i < this.places; i++) {
 			let attemptToken = previousAttempt[i];
-			if (attemptToken >= this.minColours && attemptToken <= this.maxColours) {
+			if (attemptToken >= 1 && attemptToken <= this.colours) {
 				let answerToken = this.answer[i];
 				if (attemptToken === answerToken) {
 					//Go through each position, and if it's correct, increment correctColourAndPos.
@@ -83,7 +91,7 @@ class GameData {
 				else {
 					//If it's not an exact match, put the token in the attempt and the answer into a map.
 					this.incrementMap(attemptMap, attemptToken);
-					this.incrementMap(answerMap, attemptToken);
+					this.incrementMap(answerMap, answerToken);
 				}
 			}
 			else {
@@ -102,9 +110,6 @@ class GameData {
 			previousGrade = [correctColourAndPos, correctColour];
 		}
 		this.grades[this.attemptCount - 1] = previousGrade;
-
-		printLine("attempt map" + this.mapToString(attemptMap));
-		printLine("answer map" + this.mapToString(answerMap));
 
 		//Check if round is won.
 		if (correctColourAndPos >= this.places) {
@@ -125,14 +130,6 @@ class GameData {
 		}
 	}
 
-	mapToString(map) {
-		let output = "";
-		map.forEach(function(value, key) {
-			output += "(" + key + "," + value + ")";
-
-		});
-		return output;
-	}
 }
 
 
