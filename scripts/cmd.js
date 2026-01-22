@@ -2,7 +2,13 @@
 Default application loaded by bash.
 Contains a directory of applications that can be loaded.
  */
-import {Application, ApplicationState, makeRainbow, wrapColour} from "./helpers.js";
+import {
+	Application,
+	ApplicationState,
+	makeRainbow,
+	wrapColour,
+	wrapIndividualCharsWithRandomPastelColours
+} from "./helpers.js";
 import {printLine} from "./bash.js";
 import {gurgle} from "./gurgle.js";
 
@@ -33,13 +39,15 @@ export class cmd extends Application {
 			this.nextApplication = command;
 			this.state = ApplicationState.OPEN_APPLICATION;
 		}
+		else if (command === "rainbow") {
+			printLine(makeRainbow(wrapIndividualCharsWithRandomPastelColours("Rainbow text rainbow text rainbow text.")));
+		}
 		else {
 			printLine(command + ': command not found');
 		}
 	}
 
 	prompt() {
-		//wrapColour(this.user, '#55cc33')
-		return makeRainbow(this.user) + ':' + wrapColour(this.path, '#5566ee') + '$ ';
+		return wrapColour(this.user, '#55cc33')  + ':' + wrapColour(this.path, '#5566ee') + '$ ';
 	}
 }

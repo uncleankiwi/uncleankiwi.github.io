@@ -1,4 +1,10 @@
-import {Application, ApplicationState, wrapColour} from "./helpers.js";
+import {
+	Application,
+	ApplicationState,
+	makeRainbow,
+	wrapColour,
+	wrapIndividualCharsWithRandomPastelColours
+} from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
 const MMState = Object.freeze({
@@ -148,7 +154,7 @@ export class mm extends Application {
 	inProgressString1 = "Enter ";	//+ this.gameData.places
 	inProgressString2 = " digits from 1 to " // + this.gameData.colours
 	inProgressString3 = " : ";
-	winString = wrapColour("You win!", "#55cf88");
+	winString = makeRainbow(wrapIndividualCharsWithRandomPastelColours("You win!"));
 	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 
