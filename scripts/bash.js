@@ -20,7 +20,7 @@ let rowsFilled = 0;
 // let cursorPos = 0;
 let app = new cmd();
 
-setInterval(animColour, 1000);
+setInterval(animColour, 100);
 // let colour = new Colour(document.getElementById("rainbow").color);
 document.addEventListener('DOMContentLoaded', () => {
 	drawLog();

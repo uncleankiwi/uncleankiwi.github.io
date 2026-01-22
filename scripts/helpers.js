@@ -16,15 +16,18 @@ export const ApplicationState = Object.freeze({
 
 export function animColour() {
 	let element = document.getElementsByClassName("rainbow");
-	console.log(element.length);	//todo rm
+
+	// console.log(element[0].color + " nullcheck");
+	// console.log(window.getComputedStyle(element[0]).getPropertyValue("color"));	//todo rm
+
 	for (let i = 0; i < element.length; i++) {
-		let colourString = window.getComputedStyle(element[i]).getPropertyValue("color");
-		let colour = new Colour(colourString);
-		// console.log(colourString);
-		// console.log(colour.hex + " obj");
-		// colour.stringToRGB();
-		element[i].color = colour.increment(5);
+		if (element[i].style.color === "") {
+			element[i].style.color = window.getComputedStyle(element[i]).getPropertyValue("color");
+		}
+		let colour = new Colour(element[i].style.color);
+		element[i].style.color = colour.increment(1);
 	}
+
 }
 
 export class Application {

@@ -1,15 +1,15 @@
 
 //Note: RGB and HSV values all range from 0-1.
 export class Colour {
-	hex = "";
+	raw = "";
 	r = 0;
 	g = 0;
 	b = 0;
 	h = 0;
 	s = 0;
 	v = 0;
-	constructor(hex) {
-		this.hex = hex;
+	constructor(colourString) {
+		this.raw = colourString;
 	}
 
 	//step: how much the hue should be increased by.
@@ -20,24 +20,23 @@ export class Colour {
 		this.h %= 1;
 		this.convertToRGB();
 		this.RGBToString();
-		return this.hex;
+		return this.raw;
 	}
 
-	//Write the RGB values given the hex colour string.
+	//Write the RGB values given the rgb(xx, yy, zz) input string.
 	stringToRGB() {
-		let decimal = parseInt(this.hex.substring(1), 16);
-		
-		console.log("hi " + this.hex.substring(1) + " hi")
-		this.r = Math.floor(decimal / (255 * 255)) / 255;
-		this.g = Math.floor((decimal % 255) / 255) / 255;
-		this.b = (decimal % 255) / 255;
+		[this.r, this.g, this.b] = this.raw.match(/\d+/g).map(Number);
+		this.r /= 255;
+		this.g /= 255;
+		this.b /= 255;
 	}
 
 	//Write RGB string.
 	RGBToString() {
-		this.hex = "#" + (this.r * 255).toString(16) +
-			(this.g * 255).toString(16) +
-			(this.b * 255).toString(16);
+		this.raw = `rgb(${Math.floor(this.r * 255)},${Math.floor(this.g * 255)},${Math.floor(this.b * 255)})`;
+	// 	this.raw = "#" + Math.floor(this.r * 255).toString(16) +
+	// 		Math.floor(this.g * 255).toString(16) +
+	// 		Math.floor(this.b * 255).toString(16);
 	}
 
 	//Convert this object's RGB values into HSV.
@@ -101,7 +100,7 @@ export class Colour {
 		else {
 			this.r = max;
 			this.g = min;
-			this.b =otherColour;
+			this.b = otherColour;
 		}
 	}
 
