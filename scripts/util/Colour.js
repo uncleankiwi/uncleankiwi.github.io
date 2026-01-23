@@ -10,12 +10,12 @@ export class Colour {
 	v = 0;
 	constructor(colourString) {
 		this.raw = colourString;
+		this.stringToRGB();
+		this.convertToHSV();
 	}
 
 	//step: how much the hue should be increased by.
 	increment(step) {
-		this.stringToRGB();
-		this.convertToHSV();
 		this.h += (step / 100);
 		this.h %= 1;
 		this.convertToRGB();
