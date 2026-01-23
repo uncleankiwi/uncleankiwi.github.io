@@ -172,7 +172,7 @@ export class mm extends Application {
 		switch (this.gameState) {
 			case MMState.TITLE:
 				clearLog();
-				if (command === 'q') {x
+				if (command === 'q') {
 					this.state = ApplicationState.CLOSE;
 					return;
 				}

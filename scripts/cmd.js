@@ -20,7 +20,8 @@ export class cmd extends Application {
 		["gurgle", ''],
 		["mm", ''],
 		["suso", ''],
-		["clock", '']
+		["clock", ''],
+		["hoge", '']
 	]);
 	user= 'user@uncleankiwi.github.io';
 	path = '~';

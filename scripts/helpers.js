@@ -20,7 +20,6 @@ export function animColour() {
 	for (let i = 0; i < elements.length; i++) {
 		animateNode(elements[i]);
 		let children = elements[i].children;
-		console.log(children.length + " kids");
 		for (let j = 0; j < children.length; j++) {
 			animateNode(children[j]);
 		}
@@ -67,6 +66,10 @@ export class Application {
 		if (command === 'exit' || command === 'quit') {
 			this.state = ApplicationState.CLOSE;
 		}
+	}
+
+	redraw() {
+
 	}
 
 	prompt() {
