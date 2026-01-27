@@ -1,5 +1,11 @@
 import {Colour} from "./util/Colour.js";
 
+//To prevent generating fresh colours and creating bloat in each application's colour map,
+//at most 100 pastel colours will be generated, then old ones will be reused.
+const MAX_PASTEL_COLOURS = 100;
+let pastelColourArr = [];
+let pastelColourIndex = 0;
+
 export function wrapColour(str, colour) {
 	return '<span style="color: ' + colour + '">' + str + '</span>';
 }
@@ -59,8 +65,18 @@ export function randomColour() {
 	return `rgb(${Math.random() * 256},${Math.random() * 256},${Math.random() * 256})`;
 }
 
+//Generates a limited number of pastel colours before it starts using old ones.
 export function randomPastelColour() {
-	return `rgb(${rand(200, 255)},${rand(128, 255)},${rand(128, 255)})`;
+	if (pastelColourArr[pastelColourIndex] === undefined) {
+		pastelColourArr[pastelColourIndex] =
+			`rgb(${rand(120, 255)},${rand(120, 255)},${rand(120, 255)})`;
+	}
+	let colour = pastelColourArr[pastelColourIndex];
+	pastelColourIndex++;
+	if (pastelColourIndex >= MAX_PASTEL_COLOURS) {
+		pastelColourIndex = 0;
+	}
+	return colour;
 }
 
 //Generates an integer between x and y
