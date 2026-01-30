@@ -1,5 +1,4 @@
 import {
-	animColour,
 	Application,
 	ApplicationState,
 	makeRainbow,
@@ -274,7 +273,7 @@ export class mm extends Application {
 
 	redraw() {
 		super.redraw();
-		animColour(this, new Date());
+		this.animColour(new Date());
 	}
 
 	//Print out all attempts so far and their grade, plus the attemptsCount at the bottom.

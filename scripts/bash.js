@@ -1,6 +1,6 @@
 // noinspection ES6UnusedImports
 
-import {animColour, ApplicationState} from "./helpers.js";
+import {ApplicationState} from "./helpers.js";
 import {cmd} from "./cmd.js";
 import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";

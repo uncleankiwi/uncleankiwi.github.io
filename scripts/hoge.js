@@ -6,7 +6,6 @@ const B = "B";
 const C = "C";
 const D = "D";
 
-// noinspection SpellCheckingInspection
 export class hoge extends Application {
 	one;
 	two;

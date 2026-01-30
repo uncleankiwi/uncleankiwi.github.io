@@ -3,7 +3,6 @@ Default application loaded by bash.
 Contains a directory of applications that can be loaded.
  */
 import {
-	animColour,
 	Application,
 	ApplicationState,
 	makeRainbow,
@@ -68,7 +67,7 @@ export class cmd extends Application {
 
 	redraw() {
 		super.redraw();
-		animColour(this, new Date());
+		this.animColour(new Date());
 	}
 
 	prompt() {

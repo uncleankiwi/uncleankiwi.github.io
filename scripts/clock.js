@@ -1,5 +1,4 @@
 import {
-	animColour,
 	Application,
 	ApplicationState,
 	makeRainbow, wrapRandomPastelColour
@@ -119,7 +118,7 @@ export class clock extends Application {
 
 	redraw() {
 		super.redraw();
-		animColour(this, new Date());
+		this.animColour(new Date());
 		let dateObj = new Date();
 		let second = dateObj.getSeconds();
 
