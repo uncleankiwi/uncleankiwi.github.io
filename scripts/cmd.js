@@ -9,10 +9,14 @@ import {
 	wrapColour,
 	wrapIndividualCharsWithRandomPastelColours
 } from "./helpers.js";
-import {printLine} from "./bash.js";
+import {clearLog, printLine} from "./bash.js";
 import {gurgle} from "./gurgle.js";
 
 export class cmd extends Application {
+	static name = "cmd";
+	static HELP = "help";
+	static RAINBOW = "rainbow";
+	static CLEAR = "clear";
 
 	//Only the keys (the application names) will be used for now.
 	//The values could hold application options/a short description in the future?
@@ -41,18 +45,21 @@ export class cmd extends Application {
 			this.nextApplication = command;
 			this.state = ApplicationState.OPEN_APPLICATION;
 		}
-		else if (command === "help") {
-			printLine("Fake JS bash");
-			printLine("Type `help` to see this list.");
-			printLine("The following are some scripts that can be run");
-			printLine("(may not be implemented though).")
-			printLine("`rainbow`, `exit`, and `quit` are some additional commands.");
+		else if (command === cmd.HELP) {
+			printLine("<span style='text-decoration-line: underline;'>Fake JS bash</span>");
+			printLine(`Type \`${cmd.HELP}\` to see this list.`);
+			printLine(`Available commands in cmd: \`${cmd.RAINBOW}\` and \`${cmd.CLEAR}\`.`)
+			printLine(`Available commands in every application: \`${Application.EXIT}\` and \`${Application.QUIT}\`.`);
+			printLine("Executable scripts (may not be implemented):");
 			printLine("");
 			let keys = this.directory.keys();
 			keys.forEach(key => printLine(key));
 		}
-		else if (command === "rainbow") {
+		else if (command === cmd.RAINBOW) {
 			printLine(makeRainbow(wrapIndividualCharsWithRandomPastelColours("Rainbow text rainbow text rainbow text.")));
+		}
+		else if (command === cmd.CLEAR) {
+			clearLog();
 		}
 		else if (command === "ls" || command === "cd" || command === "cd ..") {
 			printLine("No filesystem analogue yet.")

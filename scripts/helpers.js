@@ -52,6 +52,10 @@ export function wrapIndividualCharsWithRandomPastelColours(str) {
 }
 
 export class Application {
+	static EXIT = "exit";
+	static QUIT = "quit";
+	static name;
+
 	//Stores colours and whatever they're supposed to be transformed into.
 	//Could theoretically get expensive if there are many nodes, each with a different colour.
 	//But it shouldn't come to that, since this is stored per-application.
@@ -60,7 +64,7 @@ export class Application {
 	state = ApplicationState.OPEN;
 
 	evaluate(command) {
-		if (command === 'exit' || command === 'quit') {
+		if (command === Application.EXIT || command === Application.QUIT) {
 			this.state = ApplicationState.CLOSE;
 		}
 	}

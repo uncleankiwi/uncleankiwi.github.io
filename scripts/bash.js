@@ -65,7 +65,7 @@ function onKeyUp(e) {
 		printLine(decorateInput());
 		app.evaluate(currentInput);
 		if (app.state === ApplicationState.CLOSE) {
-			if (app.constructor.a === 'cmd') {
+			if (app.constructor.a === cmd.name) {
 				clearLog();
 				printLine("Cmd restarted.");
 			}
@@ -73,7 +73,7 @@ function onKeyUp(e) {
 		}
 		else if (app.state === ApplicationState.OPEN_APPLICATION) {
 			//Only allow cmd to swap applications.
-			if (app.constructor.name === 'cmd') {
+			if (app.constructor.name === cmd.name) {
 				swapApplication(app.nextApplication);
 			}
 		}
