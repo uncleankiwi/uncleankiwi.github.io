@@ -5,6 +5,8 @@ import {
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
+const BLOCK_CHAR = "&#x2588;";
+const NBSP = "&nbsp;"
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const MONTHS = ["January","February","March","April","May","June","July","August","September",
 	"October","November","December"];
@@ -216,10 +218,10 @@ export class clock extends Application {
 	appendWithBigArray(arr, arrBigPlain, arrBigColour, inColour) {
 		for (let i = 0; i < arr.length; i++) {
 			if (!inColour) {
-				arr[i] += arrBigPlain[i] + "&nbsp;";
+				arr[i] += arrBigPlain[i] + NBSP;
 			}
 			else {
-				arr[i] += arrBigColour[i] + "&nbsp;";
+				arr[i] += arrBigColour[i] + NBSP;
 			}
 
 		}
@@ -236,14 +238,14 @@ export class clock extends Application {
 				if (colourCopy[i] === undefined) {
 					colourCopy[i] = [];
 				}
-				arr2[j] = arr2[j].replaceAll(/\S/g,"▉");
-				arr2[j] = arr2[j].replaceAll(" ","&nbsp;");
+				arr2[j] = arr2[j].replaceAll(/\S/g,BLOCK_CHAR);
+				arr2[j] = arr2[j].replaceAll(" ",NBSP);
 				//Manually copy, because each character needs a different call to wrapRandomPastelColour
 				//Or else the entire row will have the same colour and animation.
 				colourCopy[i][j] = "";
 				for (let charIndex = 0; charIndex < arr2[j].length; charIndex++) {
 					let c = arr2[j].charAt(charIndex);
-					if (c === "▉") {
+					if (c === BLOCK_CHAR) {
 						c = makeRainbow(wrapRandomPastelColour(c));
 					}
 					colourCopy[i][j] += c;
