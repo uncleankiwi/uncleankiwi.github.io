@@ -1,7 +1,7 @@
 import {
 	Application,
 	ApplicationState,
-	makeRainbow, wrapRandomPastelColour
+	makeRainbow, randomPastelColour, wrapColourHead, wrapColourTail
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
@@ -240,16 +240,26 @@ export class clock extends Application {
 				}
 				arr2[j] = arr2[j].replaceAll(/\S/g,BLOCK_CHAR);
 				arr2[j] = arr2[j].replaceAll(" ",NBSP);
+
 				//Manually copy, because each character needs a different call to wrapRandomPastelColour
 				//Or else the entire row will have the same colour and animation.
-				colourCopy[i][j] = "";
-				for (let charIndex = 0; charIndex < arr2[j].length; charIndex++) {
-					let c = arr2[j].charAt(charIndex);
-					if (c === BLOCK_CHAR) {
-						c = makeRainbow(wrapRandomPastelColour(c));
+				let str = "";
+				let matchesArr = arr2[j].split(BLOCK_CHAR);
+				for (let k = 0; k < matchesArr.length; k++) {
+					//If it's not the first element, close the tag of the decorated block character before it.
+					if (k !== 0) {
+						str += wrapColourTail();
 					}
-					colourCopy[i][j] += c;
+
+					str += matchesArr[k];
+
+					//If it's not the last element, put a decorated block character after it.
+					if (k !== matchesArr.length - 1) {
+						str += wrapColourHead(randomPastelColour()) + BLOCK_CHAR;
+					}
 				}
+
+				colourCopy[i][j] = makeRainbow(str);
 			}
 		}
 	}

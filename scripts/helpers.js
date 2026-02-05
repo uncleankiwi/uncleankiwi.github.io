@@ -7,11 +7,27 @@ let pastelColourArr = [];
 let pastelColourIndex = 0;
 
 export function wrapColour(str, colour) {
-	return '<span style="color: ' + colour + '">' + str + '</span>';
+	 return wrapColourHead(colour) + str + wrapColourTail();
+}
+
+export function wrapColourHead(colour) {
+	return '<span style="color: ' + colour + '">';
+}
+
+export function wrapColourTail() {
+	return '</span>';
 }
 
 export function makeRainbow(str) {
-	return '<span class="rainbow">' + str + '</span>';
+	return  makeRainbowHead() + str + makeRainbowTail()
+}
+
+export function makeRainbowHead() {
+	return '<span class="rainbow">';
+}
+
+export function makeRainbowTail() {
+	return '</span>';
 }
 
 export const ApplicationState = Object.freeze({
