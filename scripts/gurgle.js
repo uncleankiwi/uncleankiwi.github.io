@@ -6,6 +6,12 @@ import {GurgleGame} from "./util/GurgleGame.js";
 export class gurgle extends Application {
 	game;
 	loading;
+	// noinspection HttpUrlsUsage
+	static help = ["&nbsp;&nbsp;&nbsp;&nbsp;A clone of that famous word puzzle.",
+	"&nbsp;&nbsp;&nbsp;&nbsp;Credits: SCOWL (<a href='http://wordlist.aspell.net/'>http://wordlist.aspell.net/</a>) ",
+		"&nbsp;&nbsp;&nbsp;&nbsp;for the list of English and Canadian words.",
+		"&nbsp;&nbsp;&nbsp;&nbsp;The lists for commonality 10~~80 were loaded into ",
+		"&nbsp;&nbsp;&nbsp;&nbsp;(but not necessarily used in) this application."];
 
 	constructor() {
 		super();
@@ -45,8 +51,6 @@ export class gurgle extends Application {
 			clearLog();
 			this.game.draw();
 		}
-
-
 	}
 
 	prompt() {
@@ -55,10 +59,10 @@ export class gurgle extends Application {
 			s = "Loading...";
 		}
 		else if (this.game === undefined || this.game.lost || this.game.won) {
-			s = "Press enter to start a new game, or 'q' to quit."
+			s = "Press enter to start a new game, or 'q' to quit. "
 		}
 		else {
-			s = "Guess? ('q' to quit)";
+			s = "Guess? ('q' to quit) ";
 		}
 		return s;
 	}

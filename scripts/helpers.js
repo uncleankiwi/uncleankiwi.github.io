@@ -86,6 +86,7 @@ export class Application {
 	static EXIT = "exit";
 	static QUIT = "quit";
 	static name;
+	static help = ["No additional info available for this application."];
 
 	//Stores colours and whatever they're supposed to be transformed into.
 	//Could theoretically get expensive if there are many nodes, each with a different colour.

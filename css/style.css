@@ -10,6 +10,10 @@ body, html {
 	justify-content: center;
 }
 
+a {
+	color: #ffbb55;
+}
+
 #cmd {
 	padding: 5px;
 	font-family: var(--font-family), monospace;
@@ -31,7 +35,4 @@ body, html {
 @font-face {
 	font-family: 'Liberation Mono';
 	src: url(../resources/LiberationMono-Regular.ttf);
-	/*
-	resources/LiberationMono-Regular.ttf
-	 */
 }
