@@ -1,32 +1,49 @@
-import {Application} from "./helpers.js";
-import {printLine} from "./bash.js";
+import {Application, ApplicationState} from "./helpers.js";
+import {clearLog} from "./bash.js";
 import {Dictionary} from "./util/Dictionary.js";
+import {GurgleGame} from "./util/GurgleGame.js";
 
 export class gurgle extends Application {
-	static dictionary;
+	game;
 
 	constructor() {
 		super();
 		Dictionary.init();
 	}
 
+	redraw() {
+		super.redraw();
+		this.updateColour(new Date());
+	}
+
 	evaluate(command) {
-		super.evaluate(command);
-		printLine("gurg: eval");
-		for (let i = 0; i < 5; i++) {
-			let w = Dictionary.getRandomWord(5, 0, 3);
-			console.log(w + " some word of length 5. repeat: " + i + " Is word: " + Dictionary.isWord(w, 0, 3));
+		//super.evaluate(command);
+		if (command === "q") {	//Use this to quit instead of "quit", as that word may conflict with the game.
+			clearLog();
+			this.state = ApplicationState.CLOSE;
+			return;
 		}
 
-		for (let i = 0; i < 5; i++) {
-			let w = Dictionary.getRandomLengthWord(0, 6);
-			console.log(w + " <- word of rand length, repeat " + i + ". Is word: " + Dictionary.isWord(w, 0, 6));
+		if (this.game === undefined || this.game.won || this.game.lost) {
+			this.game = new GurgleGame(5, 0, 3, 5);
+			clearLog();
+			this.game.draw();
 		}
+		else {
+			this.game.grade(command.toLowerCase());
+			clearLog();
+			this.game.draw();
+		}
+
 
 	}
 
 	prompt() {
-		return "gurgle: prompt: ";
+		let s = "";
+		if (this.game !== undefined) {
+			s = this.game.answer;
+		}
+		return s;
 	}
 
 }

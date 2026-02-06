@@ -1,6 +1,6 @@
 import {Dictionary} from "./Dictionary.js";
 import {makeRainbow, wrapColour, wrapRandomPastelColour} from "../helpers.js";
-import {printLine} from "../bash";
+import {printLine} from "../bash.js";
 
 const LETTER_GRADE = Object.freeze({
 	DEFAULT: 0,
@@ -9,7 +9,7 @@ const LETTER_GRADE = Object.freeze({
 	WRONG: 3
 });
 
-const KEYBOARD_UPPER = ["q", "w", "e", "r", "y", "u", "i", "o", "p"];
+const KEYBOARD_UPPER = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
 const KEYBOARD_MID = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
 const KEYBOARD_LOWER = ["z", "x", "c", "v", "b", "n", "m"];
 
@@ -40,6 +40,7 @@ export class GurgleGame {
 		this.answer = Dictionary.getRandomWord(l, c1, c2);
 		this.answerArr = [...this.answer];
 		this.keyStatus = new Map();
+		this.statusDisplay = "";
 		this.setKeyToDefault(KEYBOARD_UPPER);
 		this.setKeyToDefault(KEYBOARD_MID);
 		this.setKeyToDefault(KEYBOARD_LOWER);
@@ -58,6 +59,10 @@ export class GurgleGame {
 	}
 
 	grade(attempt) {
+		if (this.won || this.lost) {
+			return;
+		}
+
 		//Check if it's a word of suitable length and is in the word lists within the c1~c3 range.
 		if (attempt.length !== this.answer.length) {
 			this.statusDisplay = "Word length wrong.";
@@ -118,14 +123,69 @@ export class GurgleGame {
 		}
 
 		//Draw keyboard and keyStatus
-		//todo
+		printLine("");
+		GurgleGame.printKeyboardRow(KEYBOARD_UPPER, this.keyStatus);
+		GurgleGame.printKeyboardRow(KEYBOARD_MID, this.keyStatus);
+		GurgleGame.printKeyboardRow(KEYBOARD_LOWER, this.keyStatus);
+
 		//Print status bar
+		printLine(this.statusDisplay);
 	}
 
 	static printAttemptLine(charArr, gradeArr) {
 		let output = "";
-		// for (let i = 0);
+		for (let i = 0; i < charArr.length; i++) {
+			if (i !== 0) {
+				output += "&nbsp;";
+			}
+			let c = charArr[i];
+			let colour;
+			switch (gradeArr[i]) {
+				case LETTER_GRADE.DEFAULT:
+					//Nothing.
+					break;
+				case LETTER_GRADE.CORRECT:
+					colour = "#00dd55";
+					break;
+				case LETTER_GRADE.WRONG_LOC:
+					colour = "#cccc00";
+					break;
+				case LETTER_GRADE.WRONG:
+					colour = "#555555";
+					break;
+				default:
+					colour = "#ff0000";
+					break;
+			}
+			output += wrapColour(c, colour);
+		}
 		printLine(output);
-		//todo
+	}
+
+	static printKeyboardRow(keyArr, keyStatus) {
+		let output = "";
+		for (let i = 0; i < keyArr.length; i++) {
+			if (i !== 0) {
+				output += "&nbsp;";
+			}
+			let c = keyArr[i];
+			let colour;
+			switch (keyStatus.get(c)) {
+				case LETTER_GRADE.DEFAULT:
+					colour = "#ffffff";
+					break;
+				case LETTER_GRADE.CORRECT:
+					colour = "#00ff00";
+					break;
+				case LETTER_GRADE.WRONG:
+					colour = "#555555";
+					break;
+				default:
+					colour = "#ff0000";
+					break;
+			}
+			output += wrapColour(c.toUpperCase(), colour);
+		}
+		printLine(output);
 	}
 }
