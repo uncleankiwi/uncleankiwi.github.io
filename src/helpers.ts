@@ -1,4 +1,5 @@
 import {Colour} from "./util/Colour.js";
+import {KeyState} from "./util/KeyState";
 
 //To prevent generating fresh colours and creating bloat in each application's colour map,
 //at most 100 pastel colours will be generated, then old ones will be reused.
@@ -82,6 +83,16 @@ export function wrapIndividualCharsWithRandomPastelColours(str: string) {
 	return output;
 }
 
+class ColourTime {
+	time: Date;
+	colour: Colour;
+
+	constructor(time: Date, colour: Colour) {
+		this.time = time;
+		this.colour = colour;
+	}
+}
+
 export class Application {
 	static EXIT = "exit";
 	static QUIT = "quit";
@@ -91,7 +102,7 @@ export class Application {
 	//Stores colours and whatever they're supposed to be transformed into.
 	//Could theoretically get expensive if there are many nodes, each with a different colour.
 	//But it shouldn't come to that, since this is stored per-application.
-	colourMap = new Map();
+	colourMap: Map<string, ColourTime> = new Map();
 
 	state: number = ApplicationState.OPEN;
 
@@ -110,7 +121,7 @@ export class Application {
 	}
 
 	//Used for detecting key combinations like ctrl+C.
-	onKeyDown(keyState: { Control: boolean; Shift: boolean; Alt: boolean; }, e: KeyboardEvent) {
+	onKeyDown(keyState: KeyState, e: KeyboardEvent) {
 
 	}
 
@@ -145,23 +156,28 @@ export class Application {
 		}
 
 		if (this.colourMap.has(cssColour)) {
-			let value = this.colourMap.get(cssColour);
+			let value: ColourTime | undefined = this.colourMap.get(cssColour);
+			if (value === undefined) {
+				let e = "Undefined colour fetched from colourMap in updateNodeColour()"
+				alert(e);
+				throw Error(e);
+			}
 			if (value.time !== lastUpdated) {
 				value.time = lastUpdated;
 			}
 			element.style.color = value.colour.raw;
 		}
 		else {
-			this.colourMap.set(cssColour, {time: lastUpdated, colour: new Colour(cssColour)});
+			this.colourMap.set(cssColour, new ColourTime(lastUpdated, new Colour(cssColour)));
 		}
 	}
 
 	//Increment colour map and possibly other stuff.
 	stepColour(lastUpdated: Date) {
-		this.colourMap.values().forEach((x: { time: Date; colour: { increment: (arg0: number) => void; }; }) => {
-			if (x.time !== lastUpdated) {
-				x.colour.increment(10);
+		for (const colourTime in this.colourMap.values()) {
+			if (colourTime.time !== lastUpdated) {
+				colourTime.colour.increment(10);
 			}
-		});
+		}
 	}
 }

@@ -75,7 +75,7 @@ function onKeyUp(e: KeyboardEvent) {
 		else if (app.state === ApplicationState.OPEN_APPLICATION) {
 			//Only allow cmd to swap applications.
 			if (app.constructor.name === cmd.applicationName) {
-				swapApplication(app.nextApplication);
+				swapApplication((app as cmd).nextApplication);
 			}
 		}
 		currentInput = '';
@@ -117,10 +117,11 @@ export function drawLog() {
 		output += log[i] + '<br />';
 	}
 	output += decorateInput();
-	document.getElementById('cmd').innerHTML = output;
+	(document.getElementById('cmd') as HTMLElement).innerHTML = output;
 }
 
 //For updating shift/control/alt status in keyState variable.
-function updateKeyState(keyString, isDown) {
+//keyof typeof KeyState
+function updateKeyState(keyString: keyof KeyState, isDown: boolean) {
 	keyState[keyString] = isDown;
 }

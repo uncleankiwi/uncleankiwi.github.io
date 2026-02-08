@@ -11,7 +11,7 @@ export class hoge extends Application {
 	one: string | undefined;
 	two: string | undefined;
 	oneArr: string[] | undefined;
-	twoMap: Map<any, any> | undefined;
+	twoMap: Map<string, string[]> | undefined;
 	readRow = 0;
 	a = "";
 	b = "";
@@ -46,7 +46,7 @@ export class hoge extends Application {
 	}
 
 	concatenate() {
-		this.oneArr = this.one.split("\n");
+		this.oneArr = (this.one as string).split("\n");
 		this.twoMap = new Map();
 		this.threeArr = [];
 		this.parseTwo();
@@ -74,14 +74,14 @@ export class hoge extends Application {
 			for (;true;) {
 				let exactMatches = 0;
 				let leftMatches = 0;
-				this.twoMap.keys().forEach(x => {
+				for (const x in this.twoMap.keys()) {
 					if (this.a === x) {
 						exactMatches++;
 					}
 					else if (this.a === x.substring(0, this.a.length)) {
 						leftMatches++;
 					}
-				});
+				}
 
 				if (exactMatches === 1) {
 					break;
@@ -165,7 +165,12 @@ export class hoge extends Application {
 
 			//look up every entry in Two
 			if (this.twoMap.has(aToLookup)) {
-				let twoValue = this.twoMap.get(aToLookup);
+				let twoValue: string[] | undefined = this.twoMap.get(aToLookup);
+				if (twoValue === undefined) {
+					let e = "Could not look up A" + aToLookup + " in map of Two."
+					alert(e);
+					throw Error(e);
+				}
 				if (twoValue.length >= 2) {
 					alert(`A ${aToLookup} occurs ${twoValue.length} times in Two. Using first instance.`);
 				}
@@ -190,9 +195,14 @@ export class hoge extends Application {
 			if (a === undefined && d === undefined) {
 				continue;
 			}
-			if ((this.twoMap as Map).has(a)) {
+			if (this.twoMap === undefined) {
+				let e = "Two map is undefined in parseTwo()."
+				alert(e);
+				throw Error(e);
+			}
+			if (this.twoMap.has(a)) {
 				alert(`Warning: Two has multiple occurrences of ${a}.`);
-				this.twoMap.get(a).push(d);
+				(this.twoMap.get(a) as string[]).push(d);
 			}
 			else {
 				this.twoMap.set(a, [d]);
@@ -202,6 +212,11 @@ export class hoge extends Application {
 
 	stringify() {
 		let output = ""
+		if (this.threeArr === undefined) {
+			let e = "Two map is undefined in parseTwo()."
+			alert(e);
+			throw Error(e);
+		}
 		for (let i = 0; i < this.threeArr.length; i++) {
 			if (i !== 0) {
 				output += "\n";
