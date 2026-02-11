@@ -8,6 +8,6 @@ export class suso extends Application {
 	}
 
 	prompt() {
-		return "(unimplemented) prefix";
+		return ["(unimplemented) prefix"];
 	}
 }

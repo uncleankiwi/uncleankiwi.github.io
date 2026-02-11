@@ -24,7 +24,7 @@ export class hoge extends Application {
 	}
 
 	prompt() {
-		return "(unimplemented) prefix";
+		return ["(unimplemented) prefix"];
 	}
 
 	onKeyDown(keyState: KeyState, e: KeyboardEvent) {

@@ -1,5 +1,5 @@
 import { Application, ApplicationState, makeRainbow, wrapColour, wrapCharsWithPastelAndRainbow } from "./helpers.js";
-import { clearLog, printLine } from "./bash.js";
+import { clearLog, LogNode, printLine } from "./bash.js";
 var MMState;
 (function (MMState) {
     MMState[MMState["TITLE"] = 0] = "TITLE";
@@ -226,25 +226,27 @@ export class mm extends Application {
     prompt() {
         switch (this.gameState) {
             case MMState.TITLE:
-                return this.titleString;
+                return [this.titleString];
             case MMState.CHOOSE_COLOURS:
-                return this.setupStringPossibleColours;
+                return [this.setupStringPossibleColours];
             case MMState.CHOOSE_CHANCES:
-                return this.setupStringChances;
+                return [this.setupStringChances];
             case MMState.CHOOSE_PLACES:
-                return this.setupStringPlaces;
+                return [this.setupStringPlaces];
             case MMState.IN_PROGRESS:
-                return this.inProgressString1 + this.gameData.places + this.inProgressString2
-                    + this.gameData.colours + this.inProgressString3;
+                return [this.inProgressString1 + this.gameData.places + this.inProgressString2
+                        + this.gameData.colours + this.inProgressString3];
             case MMState.DONE:
-                let output = "";
+                let output = [];
                 if (this.gameData.won) {
-                    output += this.winString;
+                    output.push(this.winString);
                 }
                 else if (this.gameData.lost) {
-                    output += this.loseString;
+                    output.push(this.loseString);
                 }
-                return output + " " + this.nextGameString;
+                output.push(" ");
+                output.push(this.nextGameString);
+                return output;
             default:
                 throw "Unknown game state at prompt(): " + this.gameState;
         }

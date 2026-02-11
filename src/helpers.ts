@@ -126,8 +126,8 @@ export class Application {
 
 	}
 
-	prompt(): string | LogNode {
-		return "";
+	prompt(): (string | LogNode)[] {
+		return [""];
 	}
 
 	//Used for detecting key combinations like ctrl+C.

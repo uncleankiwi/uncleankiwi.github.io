@@ -26,14 +26,14 @@ class Log {
 	currentInput: string;
 
 	constructor() {
-		this.dirty = false;
+		this.dirty = true;
 		this.nodesToAnimate = new Set<LogNode>();
 		this.nodesArray = [];
 		this.currentInput = "";
 	}
 
 	printArray(strArr: (string | LogNode)[]) {
-
+		this.dirty = true;
 		while (this.nodesArray.length + 1 >= this.MAX_LINES) {
 			this.nodesToAnimate.delete(this.nodesArray.shift()!);
 		}
@@ -65,7 +65,6 @@ class Log {
 	printLine(...str: (string | LogNode)[]) {
 		//Scooting nodes over until there is 1 space for the new line.
 		this.printArray(str);
-
 	}
 
 	clear() {
@@ -83,28 +82,22 @@ class Log {
 
 	//Prints stuff to the page only if changes have been made i.e. if dirty
 	drawLog() {
-		if (!this.dirty) {
-			return;
-		}
+		// if (!this.dirty) {
+		// 	return;
+		// }
 
 		let output = "";
 		for (let i = 0; i < this.nodesArray.length; i++) {
 			output += "<p>" + this.nodesArray[i].toString() + "</p>";
 		}
-		output += "<p>" + Log.getAppPrompt() + output + "</p>";
+		output += "<p>" + Log.getAppPrompt() + this.currentInput + "</p>";
 		(document.getElementById('cmd') as HTMLElement).innerHTML = output;
 
 		this.dirty = false;
 	}
 
 	static getAppPrompt() {
-		let s = app.prompt();
-		if (typeof(s) === "string") {
-			return s;
-		}
-		else {
-			return s.toString();
-		}
+		return app.prompt().join("");
 	}
 }
 

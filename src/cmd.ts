@@ -5,7 +5,6 @@ Contains a directory of applications that can be loaded.
 import {
 	Application,
 	ApplicationState,
-	makeRainbow,
 	wrapColour,
 	wrapCharsWithPastelAndRainbow
 } from "./helpers.js";
@@ -104,6 +103,6 @@ export class cmd extends Application {
 	}
 
 	prompt() {
-		return wrapColour(this.user, '#55cc33')  + ':' + wrapColour(this.path, '#5566ee') + '$ ';
+		return [wrapColour(this.user, '#55cc33'), ':', wrapColour(this.path, '#5566ee'), '$ '];
 	}
 }

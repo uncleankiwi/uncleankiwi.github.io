@@ -18,12 +18,13 @@ export var AnimationType;
 class Log {
     constructor() {
         this.MAX_LINES = 20;
-        this.dirty = false;
+        this.dirty = true;
         this.nodesToAnimate = new Set();
         this.nodesArray = [];
         this.currentInput = "";
     }
     printArray(strArr) {
+        this.dirty = true;
         while (this.nodesArray.length + 1 >= this.MAX_LINES) {
             this.nodesToAnimate.delete(this.nodesArray.shift());
         }
@@ -68,25 +69,19 @@ class Log {
     }
     //Prints stuff to the page only if changes have been made i.e. if dirty
     drawLog() {
-        if (!this.dirty) {
-            return;
-        }
+        // if (!this.dirty) {
+        // 	return;
+        // }
         let output = "";
         for (let i = 0; i < this.nodesArray.length; i++) {
             output += "<p>" + this.nodesArray[i].toString() + "</p>";
         }
-        output += "<p>" + Log.getAppPrompt() + output + "</p>";
+        output += "<p>" + Log.getAppPrompt() + this.currentInput + "</p>";
         document.getElementById('cmd').innerHTML = output;
         this.dirty = false;
     }
     static getAppPrompt() {
-        let s = app.prompt();
-        if (typeof (s) === "string") {
-            return s;
-        }
-        else {
-            return s.toString();
-        }
+        return app.prompt().join("");
     }
 }
 export class LogNode {

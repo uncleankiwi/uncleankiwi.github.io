@@ -18,7 +18,7 @@ export class hoge extends Application {
         printLine("(unimplemented) evaluate");
     }
     prompt() {
-        return "(unimplemented) prefix";
+        return ["(unimplemented) prefix"];
     }
     onKeyDown(keyState, e) {
         super.onKeyDown(keyState, e);

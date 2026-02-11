@@ -6,6 +6,6 @@ export class suso extends Application {
         printLine("(unimplemented) evaluate");
     }
     prompt() {
-        return "(unimplemented) prefix";
+        return ["(unimplemented) prefix"];
     }
 }

@@ -64,7 +64,7 @@ export class gurgle extends Application {
 		else {
 			s = "Guess? ('q' to quit) ";
 		}
-		return s;
+		return [s];
 	}
 
 }

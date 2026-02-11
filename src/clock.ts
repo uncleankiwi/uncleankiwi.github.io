@@ -174,7 +174,7 @@ export class clock extends Application {
 	}
 
 	prompt() {
-		return "";
+		return [""];
 	}
 
 	//Append a number. If appending a single digit, append 0 before that.

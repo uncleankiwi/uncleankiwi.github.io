@@ -155,7 +155,7 @@ export class clock extends Application {
         printLine(`${day} ${date} ${month} ${year}`);
     }
     prompt() {
-        return "";
+        return [""];
     }
     //Append a number. If appending a single digit, append 0 before that.
     //Otherwise, append each digit one after another.
