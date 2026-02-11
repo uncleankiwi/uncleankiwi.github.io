@@ -13,7 +13,7 @@ import {clearLog, printLine} from "./bash.js";
 import {gurgle} from "./gurgle.js";
 import {mm} from "./mm.js";
 import {suso} from "./suso.js";
-import clock from "./clock.js";
+import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
 
 export class cmd extends Application {
