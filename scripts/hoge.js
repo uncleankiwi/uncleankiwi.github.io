@@ -186,6 +186,7 @@ export class hoge extends Application {
                 this.twoMap.set(a, [d]);
             }
         }
+        console.log(this.twoMap); //todo rm
     }
     stringify() {
         let output = "";

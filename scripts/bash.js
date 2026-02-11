@@ -82,7 +82,6 @@ class Log {
         this.dirty = false;
     }
     step() {
-        console.log(this.nodesToAnimate.size + " size");
         this.nodesToAnimate.forEach(x => { x.anim(); });
     }
     static getAppPrompt() {
@@ -111,7 +110,6 @@ export class LogNode {
         }
     }
     anim() {
-        console.log("incrementing colour");
         if (this.animationType === AnimationType.RAINBOW) {
             this.colour?.increment(10);
             if (this.children !== undefined) {

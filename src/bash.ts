@@ -98,7 +98,6 @@ class Log {
 	}
 
 	step() {
-		console.log(this.nodesToAnimate.size + " size")
 		this.nodesToAnimate.forEach(x => {x.anim()});
 	}
 
