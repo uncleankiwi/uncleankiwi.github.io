@@ -32,22 +32,22 @@ class Log {
 		this.currentInput = "";
 	}
 
-	printLine(...str: (string | LogNode)[]) {
-		//Scooting nodes over until there is 1 space for the new line.
+	printArray(strArr: (string | LogNode)[]) {
+
 		while (this.nodesArray.length + 1 >= this.MAX_LINES) {
 			this.nodesToAnimate.delete(this.nodesArray.shift()!);
 		}
 		let nodeToAdd: LogNode;
-		if (str.length === 1) {
-			if (typeof(str[0]) === "string") {
-				nodeToAdd = new LogNode(str[0]);
+		if (strArr.length === 1) {
+			if (typeof(strArr[0]) === "string") {
+				nodeToAdd = new LogNode(strArr[0]);
 			}
 			else {
-				nodeToAdd = str[0];
+				nodeToAdd = strArr[0];
 			}
 		}
 		else {
-			let arrLogNodes: LogNode[] = str.map(x => {
+			let arrLogNodes: LogNode[] = strArr.map(x => {
 				if (typeof(x) === "string") {
 					return new LogNode(x);
 				}
@@ -60,6 +60,12 @@ class Log {
 		if (nodeToAdd.toAnimate) {
 			this.nodesToAnimate.add(nodeToAdd);
 		}
+	}
+
+	printLine(...str: (string | LogNode)[]) {
+		//Scooting nodes over until there is 1 space for the new line.
+		this.printArray(str);
+
 	}
 
 	clear() {
@@ -230,6 +236,10 @@ export function clearLog() {
 //Decorates the input line plus prefix (username and all), then appends log with it.
 export function printLine(...str: (string | LogNode)[]) {
 	log.printLine(...str);
+}
+
+export function printArray(strArr: (string | LogNode)[]) {
+	log.printArray(strArr);
 }
 
 function swapApplication(startedApp: string) {

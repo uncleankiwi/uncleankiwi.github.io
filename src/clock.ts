@@ -1,7 +1,7 @@
 import {
 	Application,
 	ApplicationState,
-	makeRainbow, randomPastelColour, wrapColourHead, wrapColourTail
+	makeRainbow, randomPastelColour
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
