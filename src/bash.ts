@@ -9,15 +9,139 @@ import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
 import {KeyState} from "./util/KeyState.js";
 
+
+//A collection of lines of text. Each line contains a LogNode, which may contain more LogNodes.
+//Adding a line marks it as dirty, which will cause it to be redrawn on the page next refresh.
+//Nodes that require animation are also placed in a Set, and every animation frame those are
+//fetched, stepped through, and if any were animated the Log is marked dirty.
+class Log {
+	MAX_LINES = 20;
+	dirty: boolean;
+	nodesToAnimate: Set<LogNode>;
+	nodesArray: LogNode[];
+	currentInput: string;
+
+	constructor() {
+		this.dirty = false;
+		this.nodesToAnimate = new Set<LogNode>();
+		this.nodesArray = [];
+		this.currentInput = "";
+	}
+
+	printLine(...str: (string | LogNode)[]) {
+		//Scooting nodes over until there is 1 space for the new line.
+		while (this.nodesArray.length + 1 >= this.MAX_LINES) {
+			this.nodesToAnimate.delete(this.nodesArray.shift()!);
+		}
+		let nodeToAdd: LogNode;
+		if (str.length === 1) {
+			if (typeof(str[0]) === "string") {
+				nodeToAdd = new LogNode(str[0]);
+			}
+			else {
+				nodeToAdd = str[0];
+			}
+		}
+		else {
+			let arrLogNodes: LogNode[] = str.map(x => {
+				if (typeof(x) === "string") {
+					return new LogNode(x);
+				}
+				else {
+					return x;
+				}
+			});
+			nodeToAdd = new LogNode(arrLogNodes);
+		}
+		if (nodeToAdd.toAnimate) {
+			this.nodesToAnimate.add(nodeToAdd);
+		}
+	}
+
+	clear() {
+		if (this.nodesArray.length != 0) {
+			this.dirty = true;
+		}
+		this.nodesArray.length = 0;
+		this.nodesToAnimate.clear();
+	}
+
+	//User pressed enter - move app.prompt() and currentInput into log array.
+	enter() {
+		printLine([Log.getAppPrompt(), this.currentInput]);
+	}
+
+	//Prints stuff to the page only if changes have been made i.e. if dirty
+	drawLog() {
+		if (!this.dirty) {
+			return;
+		}
+
+		let output = "";
+		for (let i = 0; i < rowsFilled; i++) {
+			output += "<p>" + this.nodesArray[i].toString() + "</p>";
+		}
+		output += "<p>" + Log.getAppPrompt() + output + "</p>";
+		(document.getElementById('cmd') as HTMLElement).innerHTML = output;
+
+		this.dirty = false;
+	}
+
+	static getAppPrompt() {
+		let s = app.prompt();
+		if (typeof(s) === "string") {
+			return s;
+		}
+		else {
+			return s.toString();
+		}
+	}
+}
+
+export class LogNode {
+	toAnimate: boolean;
+	str: string | undefined;
+	children: LogNode[] | undefined;
+
+	constructor(toDisplay?: string | LogNode[] | undefined, toAnimate: boolean = false) {
+		if (typeof(toDisplay) === "undefined") {
+			this.str = "";
+		}
+		else if (typeof(toDisplay) === "string") {
+			this.str = toDisplay;
+		}
+		else {
+			this.children = toDisplay;
+			for (let i = 0; i < this.children.length; i++) {
+				let node = this.children[i];
+				if (node.toAnimate) {
+					this.toAnimate = true;
+					break;
+				}
+			}
+		}
+		this.toAnimate = toAnimate;
+	}
+
+	toString() {
+		if (this.str !== undefined) {
+			return this.str;
+		}
+		else {
+			let output = "";
+			for (let i = 0; i < this.children!.length; i++) {
+				output += this.children![i].toString();
+			}
+			return output;
+		}
+	}
+}
+
 /*
 Main script. Handles the log and displaying/highlighting of the log.
 Stores which 'application' is currently running, and fetches the input prefix from them.
  */
-
-const MAX_LINES = 20;	//Does not include the input line.
-let log: string[] = [];
-let currentInput: string = "";
-let rowsFilled: number = 0;
+let log: Log = new Log();
 // let cursorPos = 0;
 export let app: Application = new cmd();
 let keyState = new KeyState();
@@ -55,15 +179,15 @@ function onKeyUp(e: KeyboardEvent) {
 	}
 
 	if (e.key.length === 1) {
-		currentInput += e.key;
+		log.currentInput += e.key;
 	}
 	else if (e.key === 'Backspace') {
-		currentInput = currentInput.substring(0, currentInput.length - 1);
+		log.currentInput = log.currentInput.substring(0, log.currentInput.length - 1);
 		e.preventDefault();	//prevent browser back from happening
 	}
 	else if (e.key === 'Enter') {
 		printLine(decorateInput());
-		app.evaluate(currentInput);
+		app.evaluate(log.currentInput);
 		if (app.state === ApplicationState.CLOSE) {
 			if (app.constructor.name === cmd.applicationName) {
 				clearLog();
@@ -77,7 +201,7 @@ function onKeyUp(e: KeyboardEvent) {
 				swapApplication((app as cmd).nextApplication);
 			}
 		}
-		currentInput = '';
+		log.currentInput = "";
 	}
 }
 
@@ -86,22 +210,12 @@ function decorateInput() {
 }
 
 export function clearLog() {
-	rowsFilled = 0;
+	log.clear();
 }
 
 //Decorates the input line plus prefix (username and all), then appends log with it.
-export function printLine(str: string) {
-	if (rowsFilled >= MAX_LINES) {
-		for (let i = 1; i < MAX_LINES; i++) {
-			log[i - 1] = log[i];
-		}
-		rowsFilled = MAX_LINES;
-		log[rowsFilled - 1] = str;
-	}
-	else {
-		log[rowsFilled] = str;
-		rowsFilled++;
-	}
+export function printLine(...str: (string | LogNode)[]) {
+	log.printLine(...str);
 }
 
 function swapApplication(startedApp: string) {
@@ -110,12 +224,7 @@ function swapApplication(startedApp: string) {
 
 //Prints out every line of log.
 export function drawLog() {
-	let output = "";
-	for (let i = 0; i < rowsFilled; i++) {
-		output += log[i] + '<br />';
-	}
-	output += decorateInput();
-	(document.getElementById('cmd') as HTMLElement).innerHTML = output;
+	log.drawLog();
 }
 
 //For updating shift/control/alt status in keyState variable.
@@ -123,3 +232,4 @@ export function drawLog() {
 function updateKeyState(keyString: keyof KeyState, isDown: boolean) {
 	keyState[keyString] = isDown;
 }
+
