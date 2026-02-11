@@ -1,6 +1,6 @@
 import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
-import type {LogNode} from "./bash";
+import {AnimationType, LogNode} from "./bash";
 
 //To prevent generating fresh colours and creating bloat in each application's colour map,
 //at most 100 pastel colours will be generated, then old ones will be reused.
@@ -8,28 +8,37 @@ const MAX_PASTEL_COLOURS = 100;
 let pastelColourArr: string[] = [];
 let pastelColourIndex = 0;
 
-export function wrapColour(str: string | number, colour: string | undefined) {
-	 return wrapColourHead(colour) + str + wrapColourTail();
+export function wrapColour(s: string | number | LogNode, colour: string | undefined) {
+	let node;
+	if (s instanceof LogNode) {
+		node = s;
+	}
+	else {
+		let text: string;
+		if (typeof(s) === "number") {
+			text = s.toString();
+		}
+		else {
+			text = s;
+		}
+		node = new LogNode(text);
+	}
+	if (colour !== undefined) {
+		node.colour = new Colour(colour);
+	}
+	return node;
 }
 
-export function wrapColourHead(colour: string | undefined) {
-	return '<span style="color: ' + colour + '">';
-}
-
-export function wrapColourTail() {
-	return '</span>';
-}
-
-export function makeRainbow(str: string) {
-	return  makeRainbowHead() + str + makeRainbowTail()
-}
-
-export function makeRainbowHead() {
-	return '<span class="rainbow">';
-}
-
-export function makeRainbowTail() {
-	return '</span>';
+export function makeRainbow(s: string | LogNode) {
+	let node: LogNode;
+	if (s instanceof LogNode) {
+		node = s;
+	}
+	else {
+		node = new LogNode(s);
+	}
+	node.animationType = AnimationType.RAINBOW;
+	return node;
 }
 
 export const ApplicationState = Object.freeze({
@@ -76,12 +85,12 @@ export function wrapRandomPastelColour(str: string) {
 	return wrapColour(str, randomPastelColour());
 }
 
-export function wrapIndividualCharsWithRandomPastelColours(str: string) {
-	let output = "";
+export function wrapCharsWithPastelAndRainbow(str: string) {
+	let output: LogNode[] = [];
 	for (let i = 0; i < str.length; i++) {
-		output += wrapRandomPastelColour(str.charAt(i));
+		output.push(makeRainbow(wrapRandomPastelColour(str.charAt(i))));
 	}
-	return output;
+	return new LogNode(output);
 }
 
 class ColourTime {

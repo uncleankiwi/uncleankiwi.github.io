@@ -3,7 +3,7 @@ import {
 	ApplicationState,
 	makeRainbow,
 	wrapColour,
-	wrapIndividualCharsWithRandomPastelColours
+	wrapCharsWithPastelAndRainbow
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 
@@ -154,7 +154,7 @@ export class mm extends Application {
 	inProgressString1 = "Enter ";	//+ this.gameData.places
 	inProgressString2 = " digits from 1 to " // + this.gameData.colours
 	inProgressString3 = " : ";
-	winString = makeRainbow(wrapIndividualCharsWithRandomPastelColours("You win!"));
+	winString = makeRainbow(wrapCharsWithPastelAndRainbow("You win!"));
 	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 

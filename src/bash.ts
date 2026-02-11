@@ -10,6 +10,10 @@ import {hoge} from "./hoge.js";
 import {KeyState} from "./util/KeyState.js";
 
 
+export enum AnimationType {
+	RAINBOW
+}
+
 //A collection of lines of text. Each line contains a LogNode, which may contain more LogNodes.
 //Adding a line marks it as dirty, which will cause it to be redrawn on the page next refresh.
 //Nodes that require animation are also placed in a Set, and every animation frame those are
@@ -68,7 +72,7 @@ class Log {
 
 	//User pressed enter - move app.prompt() and currentInput into log array.
 	enter() {
-		printLine([Log.getAppPrompt(), this.currentInput]);
+		printLine(Log.getAppPrompt(), this.currentInput);
 	}
 
 	//Prints stuff to the page only if changes have been made i.e. if dirty
@@ -78,7 +82,7 @@ class Log {
 		}
 
 		let output = "";
-		for (let i = 0; i < rowsFilled; i++) {
+		for (let i = 0; i < this.nodesArray.length; i++) {
 			output += "<p>" + this.nodesArray[i].toString() + "</p>";
 		}
 		output += "<p>" + Log.getAppPrompt() + output + "</p>";
@@ -102,8 +106,13 @@ export class LogNode {
 	toAnimate: boolean;
 	str: string | undefined;
 	children: LogNode[] | undefined;
+	log: Log;	//So that the app.prompt() can be marked dirty and propagate that change to the entire log.
+	colour: Colour | undefined;
+	animationType: AnimationType | undefined;
 
-	constructor(toDisplay?: string | LogNode[] | undefined, toAnimate: boolean = false) {
+	constructor(toDisplay?: string | LogNode[] | undefined) {
+		this.toAnimate = false;
+		this.log = log;
 		if (typeof(toDisplay) === "undefined") {
 			this.str = "";
 		}
@@ -120,7 +129,10 @@ export class LogNode {
 				}
 			}
 		}
-		this.toAnimate = toAnimate;
+	}
+
+	setDirty() {
+		log.dirty = true;
 	}
 
 	toString() {
@@ -129,8 +141,14 @@ export class LogNode {
 		}
 		else {
 			let output = "";
+			if (this.colour != undefined) {
+				output += `<span style = color:'${this.colour.raw}'>;`;
+			}
 			for (let i = 0; i < this.children!.length; i++) {
 				output += this.children![i].toString();
+			}
+			if (this.colour != undefined) {
+				output += "</span>";
 			}
 			return output;
 		}
@@ -186,7 +204,7 @@ function onKeyUp(e: KeyboardEvent) {
 		e.preventDefault();	//prevent browser back from happening
 	}
 	else if (e.key === 'Enter') {
-		printLine(decorateInput());
+		log.enter();	//Push app.prompt() and currentInput to the log.
 		app.evaluate(log.currentInput);
 		if (app.state === ApplicationState.CLOSE) {
 			if (app.constructor.name === cmd.applicationName) {
@@ -203,10 +221,6 @@ function onKeyUp(e: KeyboardEvent) {
 		}
 		log.currentInput = "";
 	}
-}
-
-function decorateInput() {
-	return app.prompt() + currentInput;
 }
 
 export function clearLog() {

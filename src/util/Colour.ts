@@ -34,9 +34,6 @@ export class Colour {
 	//Write RGB string.
 	RGBToString() {
 		this.raw = `rgb(${Math.floor(this.r * 255)},${Math.floor(this.g * 255)},${Math.floor(this.b * 255)})`;
-	// 	this.raw = "#" + Math.floor(this.r * 255).toString(16) +
-	// 		Math.floor(this.g * 255).toString(16) +
-	// 		Math.floor(this.b * 255).toString(16);
 	}
 
 	//Convert this object's RGB values into HSV.

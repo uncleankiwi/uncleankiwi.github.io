@@ -7,7 +7,7 @@ import {
 	ApplicationState,
 	makeRainbow,
 	wrapColour,
-	wrapIndividualCharsWithRandomPastelColours
+	wrapCharsWithPastelAndRainbow
 } from "./helpers.js";
 import {clearLog, printLine} from "./bash.js";
 import {gurgle} from "./gurgle.js";
@@ -78,7 +78,7 @@ export class cmd extends Application {
 			}
 		}
 		else if (commandArgs[0] === cmd.RAINBOW) {
-			printLine(makeRainbow(wrapIndividualCharsWithRandomPastelColours("Rainbow text rainbow text rainbow text.")));
+			printLine((wrapCharsWithPastelAndRainbow("Rainbow text rainbow text rainbow text.")));
 		}
 		else if (commandArgs[0] === cmd.CLEAR) {
 			clearLog();

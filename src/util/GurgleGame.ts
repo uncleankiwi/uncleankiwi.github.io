@@ -1,6 +1,6 @@
 import {Dictionary} from "./Dictionary.js";
 import {makeRainbow, padToCentre, wrapColour, wrapRandomPastelColour} from "../helpers.js";
-import {printLine} from "../bash.js";
+import {LogNode, printLine} from "../bash.js";
 
 enum LETTER_GRADE {
 	DEFAULT,
@@ -22,7 +22,7 @@ export class GurgleGame {
 	c1;
 	c2;
 	c3;
-	statusDisplay;	//Displays some status text, e.g. win/lose status or word not in dictionary.
+	statusDisplay: LogNode[];	//Displays some status text, e.g. win/lose status or word not in dictionary.
 	keyStatus;	//Maps each key (or letter) to whether that letter is present or not in the answer.
 	defaultGrade;	//Array of answer length that's filled with DEFAULT letter grade, used for printing.
 	defaultAttempt;	//Attempt of answer length filled with _ characters, also used for printing.
@@ -40,7 +40,7 @@ export class GurgleGame {
 		this.answer = Dictionary.getRandomWord(l, c1, c2);
 		this.answerArr = [...this.answer];
 		this.keyStatus = new Map<string, LETTER_GRADE>();
-		this.statusDisplay = "";
+		this.statusDisplay = [];
 		this.setKeyToDefault(KEYBOARD_UPPER);
 		this.setKeyToDefault(KEYBOARD_MID);
 		this.setKeyToDefault(KEYBOARD_LOWER);
@@ -65,15 +65,15 @@ export class GurgleGame {
 
 		//Check if it's a word of suitable length and is in the word lists within the c1~c3 range.
 		if (attempt.length !== this.answer.length) {
-			this.statusDisplay = "Word length wrong.";
+			this.statusDisplay[0] = new LogNode("Word length wrong.");
 			return;
 		}
 		if (!Dictionary.isWord(attempt, this.c1, this.c3)) {
-			this.statusDisplay = attempt + " is not in word list."
+			this.statusDisplay[0] = new LogNode(attempt + " is not in word list.");
 			return;
 		}
 
-		this.statusDisplay = "";
+		this.statusDisplay[0] = new LogNode("");
 
 		let attemptArr = [...attempt]; //Splits the attempt into individual characters
 		let gradeArr = []
@@ -101,7 +101,7 @@ export class GurgleGame {
 		//Check for win
 		if (!anyWrongChar) {
 			this.won = true;
-			this.statusDisplay = makeRainbow(wrapRandomPastelColour("You win!"));
+			this.statusDisplay[0] = makeRainbow(wrapRandomPastelColour("You win!"));
 		}
 		//check for loss
 		else if (this.grades.length >= GurgleGame.MAX_ATTEMPTS) {
