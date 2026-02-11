@@ -22,7 +22,17 @@ export class Colour {
     }
     //Write the RGB values given the rgb(xx, yy, zz) input string.
     stringToRGB() {
-        [this.r, this.g, this.b] = this.raw.match(/\d+/g).map(Number);
+        if (this.raw.length === 7 && this.raw.startsWith("#")) {
+            //Reading #FFFFFF format
+            let arr = Array.from(this.raw);
+            this.r = Number(`0x${this.raw.substring(1, 3)}`);
+            this.g = Number(`0x${this.raw.substring(3, 5)}`);
+            this.b = Number(`0x${this.raw.substring(5)}`);
+        }
+        else {
+            //Reading rgb(255,255,255) format
+            [this.r, this.g, this.b] = this.raw.match(/\d+/g).map(Number);
+        }
         this.r /= 255;
         this.g /= 255;
         this.b /= 255;
@@ -93,5 +103,10 @@ export class Colour {
             this.g = min;
             this.b = otherColour;
         }
+    }
+    static hexToDec(str1, str2) {
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+        str1.sub;
     }
 }

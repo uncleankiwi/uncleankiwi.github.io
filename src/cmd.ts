@@ -86,7 +86,7 @@ export class cmd extends Application {
 			// noinspection GrazieInspection
 			if (commandArgs[0] === "ls" || commandArgs[0] === "cd") {
 				//To implement "cd .." if this is implemented as well.
-				printLine("No filesystem analogue yet.")
+				printLine("No filesystem analogue yet.");
 			}
 			else if (commandArgs[0].trim() === "") {
 				//do nothing.

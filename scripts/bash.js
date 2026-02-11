@@ -48,6 +48,7 @@ class Log {
             });
             nodeToAdd = new LogNode(arrLogNodes);
         }
+        this.nodesArray.push(nodeToAdd);
         if (nodeToAdd.toAnimate) {
             this.nodesToAnimate.add(nodeToAdd);
         }
@@ -74,9 +75,9 @@ class Log {
         // }
         let output = "";
         for (let i = 0; i < this.nodesArray.length; i++) {
-            output += "<p>" + this.nodesArray[i].toString() + "</p>";
+            output += "<div>" + this.nodesArray[i].toString() + "</div>";
         }
-        output += "<p>" + Log.getAppPrompt() + this.currentInput + "</p>";
+        output += "<div>" + Log.getAppPrompt() + this.currentInput + "</div>";
         document.getElementById('cmd').innerHTML = output;
         this.dirty = false;
     }
