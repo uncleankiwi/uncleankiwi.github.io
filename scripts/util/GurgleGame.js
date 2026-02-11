@@ -45,14 +45,14 @@ export class GurgleGame {
         }
         //Check if it's a word of suitable length and is in the word lists within the c1~c3 range.
         if (attempt.length !== this.answer.length) {
-            this.statusDisplay = [new LogNode("Word length wrong.")];
+            this.statusDisplay = ["Word length wrong."];
             return;
         }
         if (!Dictionary.isWord(attempt, this.c1, this.c3)) {
-            this.statusDisplay = [new LogNode(attempt + " is not in word list.")];
+            this.statusDisplay = [attempt, " is not in word list."];
             return;
         }
-        this.statusDisplay = [new LogNode("")];
+        this.statusDisplay = [""];
         let attemptArr = [...attempt]; //Splits the attempt into individual characters
         let gradeArr = [];
         this.attempts.push(attemptArr);

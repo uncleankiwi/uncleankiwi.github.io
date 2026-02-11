@@ -125,6 +125,9 @@ export class LogNode {
         if (this.colour != undefined) {
             output += "</span>";
         }
+        if (output.length === 0) {
+            output = "<br />";
+        }
         return output;
     }
 }
