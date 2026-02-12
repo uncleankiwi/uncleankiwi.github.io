@@ -100,17 +100,24 @@ export class LogNode {
         }
         else {
             this.children = toDisplay;
-            for (let i = 0; i < this.children.length; i++) {
-                let node = this.children[i];
-                if (node.toAnimate) {
+            this.children.forEach(x => {
+                x.parent = this;
+                if (x.toAnimate && !this.toAnimate && this.parent === undefined) {
+                    this.animationType = x.animationType;
                     this.toAnimate = true;
-                    break;
+                    log.nodesToAnimate.add(this);
                 }
-            }
+            });
         }
     }
     anim() {
         if (this.animationType === AnimationType.RAINBOW) {
+            if (this.colour === undefined) {
+                console.log("undefined colour");
+            }
+            else {
+                console.log(this.colour.raw);
+            }
             this.colour?.increment(10);
             if (this.children !== undefined) {
                 for (let i = 0; i > this.children.length; i++) {

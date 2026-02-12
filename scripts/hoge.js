@@ -72,14 +72,6 @@ export class hoge extends Application {
                         leftMatches++;
                     }
                 });
-                // for (const x in this.twoMap.keys()) {
-                // 	if (this.a === x) {
-                // 		exactMatches++;
-                // 	}
-                // 	else if (this.a === x.substring(0, this.a.length)) {
-                // 		leftMatches++;
-                // 	}
-                // }
                 if (exactMatches === 1) {
                     break;
                 }

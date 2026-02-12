@@ -35,6 +35,13 @@ export function makeRainbow(s) {
         node = new LogNode(s);
     }
     node.animationType = AnimationType.RAINBOW;
+    node.toAnimate = true;
+    if (node.children !== undefined) {
+        node.children.forEach(x => {
+            x.toAnimate = true;
+            x.animationType = AnimationType.RAINBOW;
+        });
+    }
     return node;
 }
 export var ApplicationState;

@@ -112,6 +112,7 @@ export class LogNode {
 	children: LogNode[] | undefined;
 	log: Log;	//So that the app.prompt() can be marked dirty and propagate that change to the entire log.
 	colour: Colour | undefined;
+	parent: LogNode | undefined;
 	animationType: AnimationType | undefined;
 
 	constructor(toDisplay?: string | LogNode[] | undefined) {
@@ -125,13 +126,14 @@ export class LogNode {
 		}
 		else {
 			this.children = toDisplay;
-			for (let i = 0; i < this.children.length; i++) {
-				let node = this.children[i];
-				if (node.toAnimate) {
+			this.children.forEach(x => {
+				x.parent = this;
+				if (x.toAnimate && !this.toAnimate && this.parent === undefined) {
+					this.animationType = x.animationType;
 					this.toAnimate = true;
-					break;
+					log.nodesToAnimate.add(this);
 				}
-			}
+			});
 		}
 	}
 
@@ -139,6 +141,7 @@ export class LogNode {
 		if (this.animationType === AnimationType.RAINBOW) {
 			this.colour?.increment(10);
 			if (this.children !== undefined) {
+				console.log("children anim");
 				for (let i = 0; i > this.children.length; i++) {
 					this.children[i].anim();
 				}
