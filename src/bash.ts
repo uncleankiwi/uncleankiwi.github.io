@@ -69,7 +69,7 @@ class Log {
 	}
 
 	clear() {
-		if (this.nodesArray.length != 0) {
+		if (this.nodesArray.length !== 0) {
 			this.dirty = true;
 		}
 		this.nodesArray.length = 0;
@@ -161,7 +161,7 @@ export class LogNode {
 
 	toString() {
 		let output = "";
-		if (this.colour != undefined) {
+		if (this.colour !== undefined) {
 			output += `<span style = color:${this.colour.raw}>`;
 		}
 		if (this.str !== undefined) {
@@ -172,7 +172,7 @@ export class LogNode {
 				output += this.children![i].toString();
 			}
 		}
-		if (this.colour != undefined) {
+		if (this.colour !== undefined) {
 			output += "</span>";
 		}
 		if (output.length === 0) {
