@@ -99,6 +99,13 @@ class Log {
 
 	step() {
 		this.nodesToAnimate.forEach(x => {x.anim()});
+		//The current app's prompt also has to be animated separately since they're not stored in
+		//the nodesArray or nodesToAnimate.
+		app.prompt().forEach(x => {
+			if (x instanceof LogNode && x.toAnimate) {
+				x.anim();
+			}
+		});
 	}
 
 	static getAppPrompt() {
@@ -141,8 +148,7 @@ export class LogNode {
 		if (this.animationType === AnimationType.RAINBOW) {
 			this.colour?.increment(10);
 			if (this.children !== undefined) {
-				console.log("children anim");
-				for (let i = 0; i > this.children.length; i++) {
+				for (let i = 0; i < this.children.length; i++) {
 					this.children[i].anim();
 				}
 			}

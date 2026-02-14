@@ -154,7 +154,7 @@ export class mm extends Application {
 	inProgressString1 = "Enter ";	//+ this.gameData.places
 	inProgressString2 = " digits from 1 to " // + this.gameData.colours
 	inProgressString3 = " : ";
-	winString = makeRainbow(wrapCharsWithPastelAndRainbow("You win!"));
+	winString = wrapCharsWithPastelAndRainbow("You win!");
 	loseString = wrapColour("You lose...", "#555555");
 	nextGameString = "Press Enter to begin another game, or 'q' to quit."
 

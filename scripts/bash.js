@@ -58,7 +58,7 @@ class Log {
         this.printArray(str);
     }
     clear() {
-        if (this.nodesArray.length != 0) {
+        if (this.nodesArray.length !== 0) {
             this.dirty = true;
         }
         this.nodesArray.length = 0;
@@ -83,6 +83,13 @@ class Log {
     }
     step() {
         this.nodesToAnimate.forEach(x => { x.anim(); });
+        //The current app's prompt also has to be animated separately since they're not stored in
+        //the nodesArray or nodesToAnimate.
+        app.prompt().forEach(x => {
+            if (x instanceof LogNode && x.toAnimate) {
+                x.anim();
+            }
+        });
     }
     static getAppPrompt() {
         return app.prompt().join("");
@@ -112,15 +119,9 @@ export class LogNode {
     }
     anim() {
         if (this.animationType === AnimationType.RAINBOW) {
-            if (this.colour === undefined) {
-                console.log("undefined colour");
-            }
-            else {
-                console.log(this.colour.raw);
-            }
             this.colour?.increment(10);
             if (this.children !== undefined) {
-                for (let i = 0; i > this.children.length; i++) {
+                for (let i = 0; i < this.children.length; i++) {
                     this.children[i].anim();
                 }
             }
@@ -131,7 +132,7 @@ export class LogNode {
     }
     toString() {
         let output = "";
-        if (this.colour != undefined) {
+        if (this.colour !== undefined) {
             output += `<span style = color:${this.colour.raw}>`;
         }
         if (this.str !== undefined) {
@@ -142,7 +143,7 @@ export class LogNode {
                 output += this.children[i].toString();
             }
         }
-        if (this.colour != undefined) {
+        if (this.colour !== undefined) {
             output += "</span>";
         }
         if (output.length === 0) {
