@@ -262,8 +262,8 @@ export function printArray(strArr: (string | LogNode)[]) {
 	log.printArray(strArr);
 }
 
-function swapApplication(startedApp: string) {
-	app = eval(`new ${startedApp}();`);
+function swapApplication(startedApp: string[]) {
+	app = eval(`new ${startedApp[0]}(startedApp);`);
 }
 
 //Prints out every line of log.

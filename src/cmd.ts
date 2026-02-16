@@ -32,7 +32,7 @@ export class cmd extends Application {
 	]);
 	user= 'user@uncleankiwi.github.io';
 	path = '~';
-	nextApplication = '';
+	nextApplication: string[] = [];
 
 	constructor() {
 		super();
@@ -46,7 +46,7 @@ export class cmd extends Application {
 		return;
 		}
 		if (cmd.directory.has(commandArgs[0])) {
-			this.nextApplication = commandArgs[0];
+			this.nextApplication = commandArgs;
 			this.state = ApplicationState.OPEN_APPLICATION;
 		}
 		else if (commandArgs[0] === cmd.RAINBOW) {

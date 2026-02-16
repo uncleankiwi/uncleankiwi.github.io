@@ -101,30 +101,41 @@ export class Application {
 	static EXIT = "exit";
 	static QUIT = "quit";
 
-	/*
-	When displaying help <applicationName>, it should be formatted as below (note indentation).
-	Options are not hardcoded into the application, instead they are written into options
-	together with the parameter name, and whether it is hidden (should not appear on help, default false).
-	They appear here only if the application has options.
-	===
-user:~$ help applicationName
-applicationName: optionsString
-	shortHelp
-
-	longHelp
-
-	Options:
-	  -a param	some explanation.
-	  -b 		more text.
-	  -c		some more text.
-	 */
 	static applicationName: string;
-	static optionsString: string | undefined;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
 	static appOptions: AppOption[] = [];
 	static appArguments: AppArgument[] = [];
 	state: number = ApplicationState.OPEN;
+
+	//Options that are preceded by "-" are an argument.
+	//If the next word does not have "-", it's the parameter of that argument.
+	//If it does, then the argument doesn't have a parameter, and this new word is another argument.
+	//Words that don't belong to an argument are parameters.
+	userArgs: Map<string,string | undefined> = new Map;
+	userParams: string[] = [];
+
+	constructor(...args: string[]) {
+		let openParam: string | undefined;	//An option that does not yet have a parameter assigned to it
+		for (let i = 1; i < args.length; i++) {
+			let word = args[i];
+			if (word.startsWith("-") && word.length > 1) {
+				//This word is an option
+				openParam = word.substring(1);
+				this.userArgs.set(openParam, undefined);
+			}
+			else {
+				//This word is a param that may or may not belong to an option
+				if (openParam !== undefined) {
+					this.userArgs.set(openParam, word);
+					openParam = undefined;
+				}
+				else {
+					this.userParams.push(word);
+				}
+			}
+		}
+	}
 
 	evaluate(command: string) {
 		if (command === Application.EXIT || command === Application.QUIT) {
