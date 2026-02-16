@@ -57,6 +57,10 @@ export function randomPastelColour() {
 export function rand(x, y) {
     return Math.floor(x + Math.random() * (y - x + 1));
 }
+//Returns a bunch of spaces for indentation and such
+export function spaces(n) {
+    return "&nbsp;".repeat(n);
+}
 //Attempts to pad spaces to the left of the string such that the string's centre is about 'length' characters
 //from the left.
 export function padToCentre(str) {
@@ -83,6 +87,7 @@ export function wrapCharsWithPastelAndRainbow(str) {
 export class Application {
     constructor() {
         this.state = ApplicationState.OPEN;
+        this.userParams = [];
     }
     evaluate(command) {
         if (command === Application.EXIT || command === Application.QUIT) {
@@ -100,4 +105,7 @@ export class Application {
 }
 Application.EXIT = "exit";
 Application.QUIT = "quit";
-Application.help = ["No additional info available for this application."];
+Application.shortHelp = "No short description available.";
+Application.longHelp = ["No additional info available for this application."];
+Application.appOptions = [];
+Application.appArguments = [];

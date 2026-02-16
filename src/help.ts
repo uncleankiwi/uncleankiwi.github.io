@@ -7,6 +7,7 @@ import {mm} from "./mm.js";
 import {suso} from "./suso.js";
 import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
+import {UserOptions} from "./util/UserOptions.js";
 
 /*
 When displaying help <applicationName>, it should be formatted as below (note indentation).
@@ -29,16 +30,20 @@ export class help extends Application {
 	static applicationName = "help";
 	static optionsString: string = Application.applicationName;
 	static shortHelp: string = "Displays info about bash commands and applications.";
-	static longHelp = help.getLongHelp();
+	//static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
 	static options: AppOption[] = [];
 
-	constructor() {
+	constructor(...args: string[]) {
 		super();
+
+		help.longHelp = help.getLongHelp();
+
+		this.userArgs = new UserOptions(this, ...args);
+
 		if (this.userParams.length > 0) {
 			let appToFetch = this.userParams[0];
 			if (cmd.directory.has(appToFetch)) {
-				// noinspection JSUnresolvedReference
-				let helpTextArr = eval(appToFetch + ".help");
+				let helpTextArr: string[] = eval(appToFetch + ".longHelp");
 				for (let i = 0; i < helpTextArr.length; i++) {
 					printLine(helpTextArr[i]);
 				}

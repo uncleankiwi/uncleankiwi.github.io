@@ -7,6 +7,7 @@ import { Colour } from "./util/Colour.js";
 import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
 import { KeyState } from "./util/KeyState.js";
+import { help } from "./help.js";
 export var AnimationType;
 (function (AnimationType) {
     AnimationType[AnimationType["RAINBOW"] = 0] = "RAINBOW";
@@ -25,6 +26,7 @@ class Log {
     }
     printArray(strArr) {
         this.dirty = true;
+        //Scooting nodes over until there is 1 space for the new line.
         while (this.nodesArray.length + 1 >= this.MAX_LINES) {
             this.nodesToAnimate.delete(this.nodesArray.shift());
         }
@@ -54,7 +56,6 @@ class Log {
         }
     }
     printLine(...str) {
-        //Scooting nodes over until there is 1 space for the new line.
         this.printArray(str);
     }
     clear() {
@@ -216,7 +217,6 @@ function onKeyUp(e) {
 export function clearLog() {
     log.clear();
 }
-//Decorates the input line plus prefix (username and all), then appends log with it.
 export function printLine(...str) {
     log.printLine(...str);
 }
@@ -224,7 +224,7 @@ export function printArray(strArr) {
     log.printArray(strArr);
 }
 function swapApplication(startedApp) {
-    app = eval(`new ${startedApp}();`);
+    app = eval(`new ${startedApp[0]}(startedApp);`);
 }
 //Prints out every line of log.
 export function drawLog() {

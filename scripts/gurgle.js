@@ -1,7 +1,8 @@
-import { Application, ApplicationState } from "./helpers.js";
+import { Application, ApplicationState, spaces } from "./helpers.js";
 import { clearLog, app } from "./bash.js";
 import { Dictionary } from "./util/Dictionary.js";
 import { GurgleGame } from "./util/GurgleGame.js";
+import { AppOption } from "./util/AppOption.js";
 export class gurgle extends Application {
     constructor() {
         super();
@@ -50,9 +51,17 @@ export class gurgle extends Application {
         return [s];
     }
 }
+gurgle.applicationName = "gurgle";
+gurgle.shortHelp = "A clone of that famous word puzzle.";
 // noinspection HttpUrlsUsage
-gurgle.help = ["&nbsp;&nbsp;&nbsp;&nbsp;A clone of that famous word puzzle.",
-    "&nbsp;&nbsp;&nbsp;&nbsp;Credits: SCOWL (<a href='http://wordlist.aspell.net/'>http://wordlist.aspell.net/</a>) ",
-    "&nbsp;&nbsp;&nbsp;&nbsp;for the list of English and Canadian words.",
-    "&nbsp;&nbsp;&nbsp;&nbsp;The lists for commonality 10~~80 were loaded into ",
-    "&nbsp;&nbsp;&nbsp;&nbsp;(but not necessarily used in) this application."];
+gurgle.longHelp = [
+    "Credits: SCOWL (<a href='http://wordlist.aspell.net/'>http://wordlist.aspell.net/</a>) ",
+    "for the list of English and Canadian words.",
+    "The lists for commonality 10~~80 were loaded into ",
+    "(but not necessarily used in) this application."
+];
+gurgle.options = [
+    new AppOption("l", "length of word. Random when param unspecified.", "len"),
+    new AppOption("a", "highest commonality of word to use as answer (0-8)", "aLimit"),
+    new AppOption("g", "highest commonality of word usable as guess (0-8)", "gLimit")
+];

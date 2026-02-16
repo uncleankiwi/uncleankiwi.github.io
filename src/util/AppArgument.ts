@@ -1,4 +1,4 @@
-import {spaces} from "../helpers";
+import {spaces} from "../helpers.js";
 
 export class AppArgument {
 	param: string;

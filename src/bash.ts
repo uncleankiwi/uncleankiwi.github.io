@@ -8,6 +8,7 @@ import {Colour} from "./util/Colour.js";
 import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
 import {KeyState} from "./util/KeyState.js";
+import {help} from "./help.js";
 
 
 export enum AnimationType {

@@ -14,6 +14,7 @@ import {mm} from "./mm.js";
 import {suso} from "./suso.js";
 import {clock} from "./clock.js";
 import {hoge} from "./hoge.js";
+import {help} from "./help.js";
 
 export class cmd extends Application {
 	static applicationName = "cmd";
@@ -28,7 +29,8 @@ export class cmd extends Application {
 		["mm", ''],
 		["suso", ''],
 		["clock", ''],
-		["hoge", '']
+		["hoge", ''],
+		["help", '']
 	]);
 	user= 'user@uncleankiwi.github.io';
 	path = '~';

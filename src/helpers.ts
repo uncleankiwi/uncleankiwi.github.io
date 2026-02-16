@@ -1,8 +1,9 @@
 import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
 import {AnimationType, LogNode} from "./bash.js";
-import type {AppOption} from "./util/AppOption";
-import type {AppArgument} from "./util/AppArgument";
+import type {AppOption} from "./util/AppOption.js";
+import type {AppArgument} from "./util/AppArgument.js";
+import type {UserOptions} from "./util/UserOptions.js";
 
 export function wrapColour(s: string | number | LogNode, colour: string | undefined) {
 	let node;
@@ -112,30 +113,8 @@ export class Application {
 	//If the next word does not have "-", it's the parameter of that argument.
 	//If it does, then the argument doesn't have a parameter, and this new word is another argument.
 	//Words that don't belong to an argument are parameters.
-	userArgs: Map<string,string | undefined> = new Map;
+	userArgs: UserOptions | undefined;	//Map<string,string | undefined> = new Map;
 	userParams: string[] = [];
-
-	constructor(...args: string[]) {
-		let openParam: string | undefined;	//An option that does not yet have a parameter assigned to it
-		for (let i = 1; i < args.length; i++) {
-			let word = args[i];
-			if (word.startsWith("-") && word.length > 1) {
-				//This word is an option
-				openParam = word.substring(1);
-				this.userArgs.set(openParam, undefined);
-			}
-			else {
-				//This word is a param that may or may not belong to an option
-				if (openParam !== undefined) {
-					this.userArgs.set(openParam, word);
-					openParam = undefined;
-				}
-				else {
-					this.userParams.push(word);
-				}
-			}
-		}
-	}
 
 	evaluate(command: string) {
 		if (command === Application.EXIT || command === Application.QUIT) {
