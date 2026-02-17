@@ -1,9 +1,9 @@
 import {Colour} from "./util/Colour.js";
 import {KeyState} from "./util/KeyState.js";
 import {AnimationType, LogNode} from "./bash.js";
-import type {AppOption} from "./util/AppOption.js";
-import type {AppArgument} from "./util/AppArgument.js";
-import type {UserOptions} from "./util/UserOptions.js";
+import {AppOption} from "./util/AppOption.js";
+import {AppArgument} from "./util/AppArgument.js";
+import {UserOptions} from "./util/UserOptions.js";
 
 export function wrapColour(s: string | number | LogNode, colour: string | undefined) {
 	let node;
@@ -105,7 +105,9 @@ export class Application {
 	static applicationName: string;
 	static shortHelp: string = "No short description available.";
 	static longHelp = ["No additional info available for this application."];
-	static appOptions: AppOption[] = [];
+	static appOptions: AppOption[] = [
+		new AppOption(undefined, "App to display help for.", "PARAM")
+	];
 	static appArguments: AppArgument[] = [];
 	state: number = ApplicationState.OPEN;
 

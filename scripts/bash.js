@@ -1,12 +1,12 @@
 import { Application, ApplicationState } from "./helpers.js";
+import { Colour } from "./util/Colour.js";
+import { KeyState } from "./util/KeyState.js";
 import { cmd } from "./cmd.js";
 import { gurgle } from "./gurgle.js";
 import { mm } from "./mm.js";
 import { suso } from "./suso.js";
-import { Colour } from "./util/Colour.js";
 import { clock } from "./clock.js";
 import { hoge } from "./hoge.js";
-import { KeyState } from "./util/KeyState.js";
 import { help } from "./help.js";
 export var AnimationType;
 (function (AnimationType) {

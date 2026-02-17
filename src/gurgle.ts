@@ -15,7 +15,7 @@ export class gurgle extends Application {
 		"for the list of English and Canadian words.",
 		"The lists for commonality 10~~80 were loaded into ",
 		"(but not necessarily used in) this application."];
-	static options: AppOption[] = [
+	static appOptions: AppOption[] = [
 		new AppOption("l", "length of word. Random when param unspecified.", "len"),
 		new AppOption("a", "highest commonality of word to use as answer (0-8)", "aLimit"),
 		new AppOption("g", "highest commonality of word usable as guess (0-8)", "gLimit")

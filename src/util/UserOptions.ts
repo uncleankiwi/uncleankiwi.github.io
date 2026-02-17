@@ -33,7 +33,9 @@ export class UserOptions {
 		this.optionsMap = new Map<string, UserOption>();
 		let appOptions: AppOption[] = eval(application.constructor.name + ".appOptions");
 		appOptions.forEach(x => {
-			this.optionsMap.set(x.option, new UserOption(x));
+			if (x.option !== undefined) {
+				this.optionsMap.set(x.option, new UserOption(x));
+			}
 		});
 
 		//Loading user options and params

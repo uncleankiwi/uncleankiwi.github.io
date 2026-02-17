@@ -7,19 +7,23 @@ export class AppOption {
         this.hidden = hidden;
     }
     //Gets a short one-liner version of the options.
-    // [-bc] [-a param]
+    // [-bc] [-a param] PARAM
     static getOptionsString(options) {
         if (options.length === 0) {
             return undefined;
         }
         let noParamOptions = "";
         let paramOptions = [];
+        let onlyParam = [];
         options.forEach(x => {
-            if (x.param === undefined) {
+            if (x.param === undefined && x.option !== undefined) {
                 noParamOptions += x.option;
             }
-            else {
+            else if (x.option !== undefined && x.param !== undefined) {
                 paramOptions.push(x);
+            }
+            else if (x.option === undefined && x.param !== undefined) {
+                onlyParam.push(x.param);
             }
         });
         let output = [];
@@ -29,6 +33,7 @@ export class AppOption {
         paramOptions.forEach(x => {
             output.push(`[-${x.option} ${x.param}]`);
         });
+        output.concat(onlyParam);
         return output.join(" ");
     }
     /*

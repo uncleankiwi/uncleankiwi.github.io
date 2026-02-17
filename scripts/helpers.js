@@ -1,6 +1,9 @@
 import { Colour } from "./util/Colour.js";
 import { KeyState } from "./util/KeyState.js";
 import { AnimationType, LogNode } from "./bash.js";
+import { AppOption } from "./util/AppOption.js";
+import { AppArgument } from "./util/AppArgument.js";
+import { UserOptions } from "./util/UserOptions.js";
 export function wrapColour(s, colour) {
     let node;
     if (s instanceof LogNode) {
@@ -107,5 +110,7 @@ Application.EXIT = "exit";
 Application.QUIT = "quit";
 Application.shortHelp = "No short description available.";
 Application.longHelp = ["No additional info available for this application."];
-Application.appOptions = [];
+Application.appOptions = [
+    new AppOption(undefined, "App to display help for.", "PARAM")
+];
 Application.appArguments = [];

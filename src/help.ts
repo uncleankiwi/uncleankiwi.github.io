@@ -31,7 +31,7 @@ export class help extends Application {
 	static optionsString: string = Application.applicationName;
 	static shortHelp: string = "Displays info about bash commands and applications.";
 	//static longHelp;	//Loaded later otherwise it'll try to read from cmd when that isn't loaded.
-	static options: AppOption[] = [];
+	static appOptions: AppOption[] = [];
 
 	constructor(...args: string[]) {
 		super();
@@ -89,7 +89,14 @@ export class help extends Application {
 		printLine("");
 		let keys = cmd.directory.keys();
 		for (const key of keys) {
-			printLine(key + " " + AppOption.getOptionsString(eval(key + ".appOptions")));
+			let s = AppOption.getOptionsString(eval(key + ".appOptions"));
+			if (s === undefined) {
+				s = key;
+			}
+			else {
+				s = key + " " + s;
+			}
+			printLine(s);
 		}
 	}
 }

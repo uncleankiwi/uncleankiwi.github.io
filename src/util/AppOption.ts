@@ -1,12 +1,12 @@
 import {spaces} from "../helpers.js";
 
 export class AppOption {
-	option: string
+	option: string | undefined;
 	param: string | undefined;
 	description: string;	//Explains this option in help.
 	hidden: boolean;		//Should this option be listed in `help <appName>` in bash?
 
-	constructor(option: string, description: string, param?: string, hidden: boolean = false) {
+	constructor(option: string | undefined, description: string, param?: string, hidden: boolean = false) {
 		this.option = option;
 		this.description = description;
 		this.param = param;
@@ -14,19 +14,23 @@ export class AppOption {
 	}
 
 	//Gets a short one-liner version of the options.
-	// [-bc] [-a param]
+	// [-bc] [-a param] PARAM
 	static getOptionsString(options: AppOption[]): string | undefined {
 		if (options.length === 0) {
 			return undefined;
 		}
 		let noParamOptions:string = "";
 		let paramOptions: AppOption[] = [];
+		let onlyParam: string[] = [];
 		options.forEach(x => {
-			if (x.param === undefined) {
+			if (x.param === undefined && x.option !== undefined) {
 				noParamOptions += x.option;
 			}
-			else {
+			else if (x.option !== undefined && x.param !== undefined) {
 				paramOptions.push(x);
+			}
+			else if (x.option === undefined && x.param !== undefined) {
+				onlyParam.push(x.param);
 			}
 		});
 		let output: string[] = [];
@@ -36,6 +40,7 @@ export class AppOption {
 		paramOptions.forEach(x => {
 			output.push(`[-${x.option} ${x.param}]`);
 		});
+		output.concat(onlyParam);
 		return output.join(" ");
 	}
 
