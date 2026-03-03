@@ -220,7 +220,7 @@ class Cursor {
 
 	currentInputWithCursor(): LogNode {
 		let nodes: LogNode[] = [];
-		if (log.currentInput.length > 1) {	//Node left of cursor, if any
+		if (this.i >= 1) {	//Node left of cursor, if any
 			nodes.push(new LogNode(log.currentInput.substring(0, this.i)));
 		}
 
@@ -299,7 +299,6 @@ function refreshScreen() {
 }
 
 function onKeyDown(e: KeyboardEvent) {
-	console.log(e);
 	keyState.down(e.key);
 	cursor.interact();
 	let eventConsumed = app.onKeyDown(keyState, e);

@@ -185,7 +185,7 @@ class Cursor {
     }
     currentInputWithCursor() {
         let nodes = [];
-        if (log.currentInput.length > 1) { //Node left of cursor, if any
+        if (this.i >= 1) { //Node left of cursor, if any
             nodes.push(new LogNode(log.currentInput.substring(0, this.i)));
         }
         let cursorNode;
@@ -253,7 +253,6 @@ function refreshScreen() {
     checkAndCloseApplication();
 }
 function onKeyDown(e) {
-    console.log(e);
     keyState.down(e.key);
     cursor.interact();
     let eventConsumed = app.onKeyDown(keyState, e);
