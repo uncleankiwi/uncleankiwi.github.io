@@ -198,8 +198,6 @@ class Cursor {
 			new Colour(window.getComputedStyle(document.getElementById("cmd")!).backgroundColor);
 		this.textColour =
 			new Colour(window.getComputedStyle(document.getElementById("cmd")!).color);
-		console.log(this.backgroundColour);
-		console.log(this.textColour);
 	}
 
 	tryMoveLeft() {
@@ -251,7 +249,7 @@ class Cursor {
 		return this.toggle ? this.textColour : undefined;
 	}
 
-	private interact() {
+	interact() {
 		this.delay = 0;
 		this.toggle = true;
 	}
@@ -276,7 +274,7 @@ Stores which 'application' is currently running, and fetches the input prefix fr
 const log: Log = new Log();
 // let cursorPos = 0;
 export let app: Application = new cmd([]);
-const keyState = new KeyState();
+const keyState = new KeyState();	//which keys are currently down?
 
 setInterval(refreshScreen, FRAME_DELAY);
 
@@ -301,25 +299,46 @@ function refreshScreen() {
 }
 
 function onKeyDown(e: KeyboardEvent) {
-	if (e.key === "Shift" || e.key === "Control" || e.key === "Alt") {
-		updateKeyState(e.key, true);
-	}
-	app.onKeyDown(keyState, e);
-}
-
-function onKeyUp(e: KeyboardEvent) {
-	if (e.key === "Shift" || e.key === "Control" || e.key === "Alt") {
-		updateKeyState(e.key, false);
+	console.log(e);
+	keyState.down(e.key);
+	cursor.interact();
+	let eventConsumed = app.onKeyDown(keyState, e);
+	if (eventConsumed) {
+		return;
 	}
 
-	if (e.key.length === 1) {
-		log.currentInput += e.key;
+	//Entering a letter: letter is inserted at i. i++
+	if (keyState.newestKey !== undefined && keyState.newestKey!.length === 1) {
+		log.currentInput = log.currentInput.substring(0, cursor.i) + keyState.newestKey +
+			log.currentInput.substring(cursor.i);
+		cursor.i++;
 	}
-	else if (e.key === 'Backspace') {
-		log.currentInput = log.currentInput.substring(0, log.currentInput.length - 1);
+	/*	Entering a letter: letter is inserted at i. i++
+		Backspace: [i-1] removed, i--
+		 */
+	else if (e.key === "ArrowLeft") {
+		cursor.tryMoveLeft();
+	}
+	else if (e.key === "ArrowRight") {
+		cursor.tryMoveRight();
+	}
+	//Backspace: [i - 1] removed, i--
+	else if (e.key === "Backspace") {
+		if (cursor.i > 0) {
+			log.currentInput = log.currentInput.substring(0, cursor.i - 1)
+				+ log.currentInput.substring(cursor.i);
+			cursor.i--;
+		}
 		e.preventDefault();	//prevent browser back from happening
 	}
-	else if (e.key === 'Enter') {
+	//Delete: if i < l, remove [i]. i unchanged.
+	else if (e.key === "Delete") {
+		if (cursor.i < log.currentInput.length) {
+			log.currentInput = log.currentInput.substring(0, cursor.i)
+				+ log.currentInput.substring(cursor.i + 1);
+		}
+	}
+	else if (e.key === "Enter") {
 		log.enter();	//Push app.prompt() and currentInput to the log.
 		app.evaluate(log.currentInput);
 		if (checkAndCloseApplication()) {
@@ -333,6 +352,10 @@ function onKeyUp(e: KeyboardEvent) {
 		}
 		log.currentInput = "";
 	}
+}
+
+function onKeyUp(e: KeyboardEvent) {
+	keyState.up(e.key);
 }
 
 function checkAndCloseApplication() {
@@ -388,11 +411,5 @@ export async function importClass(moduleName: string) {
 //Prints out every line of log.
 export function drawLog() {
 	log.drawLog();
-}
-
-//For updating shift/control/alt status in keyState variable.
-//keyof typeof KeyState
-function updateKeyState(keyString: keyof KeyState, isDown: boolean) {
-	keyState[keyString] = isDown;
 }
 

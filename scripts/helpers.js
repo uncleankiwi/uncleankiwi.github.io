@@ -110,8 +110,9 @@ export class Application {
     prompt() {
         return [""];
     }
-    //Used for detecting key combinations like ctrl+C.
+    //Used for detecting key combinations like ctrl+C. Returns if event is consumed.
     onKeyDown(keyState, e) {
+        return false;
     }
 }
 Application.EXIT = "exit";

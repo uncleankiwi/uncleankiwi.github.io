@@ -40,7 +40,7 @@ export class hoge extends Application {
 
 	onKeyDown(keyState: KeyState, e: KeyboardEvent) {
 		super.onKeyDown(keyState, e);
-		if (keyState.Control && e.key === 'v') {
+		if (keyState.has("Control", "v")) {
 			let p = navigator.clipboard.readText();
 			if (this.one === undefined) {
 				p.then((value) => {
@@ -54,6 +54,7 @@ export class hoge extends Application {
 				});
 			}
 		}
+		return false;
 	}
 
 	concatenate() {
