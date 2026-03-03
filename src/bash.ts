@@ -75,7 +75,7 @@ class Log {
 		for (let i = 0; i < this.nodesArray.length; i++) {
 			output += "<div>" + this.nodesArray[i].toString() + "</div>";
 		}
-		output += "<div>" + Log.getAppPrompt() + cursor.currentInputWithCursor() + "</div>";	//todo
+		output += "<div>" + Log.getAppPrompt() + cursor.currentInputWithCursor() + "</div>";
 		(document.getElementById('cmd') as HTMLElement).innerHTML = output;
 	}
 
