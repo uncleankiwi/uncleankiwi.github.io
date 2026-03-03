@@ -104,6 +104,8 @@ let previousSecond: number;
 let initialized = false;
 
 export class clock extends Application {
+	hideCursor = true;
+
 	constructor(args: string[]) {
 		super(args);
 		if (!initialized) {

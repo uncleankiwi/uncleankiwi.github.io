@@ -98,6 +98,7 @@ let initialized = false;
 export class clock extends Application {
     constructor(args) {
         super(args);
+        this.hideCursor = true;
         if (!initialized) {
             initialized = true;
             this.replaceCharsAndGetColourCopy(BIG_NUM, BIG_NUM_COLOUR);

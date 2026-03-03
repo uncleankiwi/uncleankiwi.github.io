@@ -94,6 +94,7 @@ export class Application {
     constructor(args) {
         this.applicationName = this.constructor.name;
         this.state = ApplicationState.OPEN;
+        this.hideCursor = false; //Should the cursor be visible on screen and blinking?
         this.userParams = [];
         this.userArgs = new UserOptions(this, args);
     }
