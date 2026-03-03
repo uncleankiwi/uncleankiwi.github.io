@@ -140,8 +140,8 @@ export class Application {
 		return [""];
 	}
 
-	//Used for detecting key combinations like ctrl+C.
+	//Used for detecting key combinations like ctrl+C. Returns if event is consumed.
 	onKeyDown(keyState: KeyState, e: KeyboardEvent) {
-
+		return false;
 	}
 }
