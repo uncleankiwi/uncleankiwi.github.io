@@ -11,6 +11,7 @@ export class Colour {
         this.raw = colourString;
         this.stringToRGB();
         this.convertToHSV();
+        this.RGBToString();
     }
     //step: how much the hue should be increased by.
     increment(step) {

@@ -7,10 +7,12 @@ export enum AnimationType {
 	RAINBOW
 }
 
-//A collection of lines of text. Each line contains a LogNode, which may contain more LogNodes.
-//Adding a line marks it as dirty, which will cause it to be redrawn on the page next refresh.
-//Nodes that require animation are also placed in a Set, and every animation frame those are
-//fetched, stepped through, and if any were animated the Log is marked dirty.
+const FRAME_DELAY = 100;
+
+/*A collection of lines of text. Each line contains a LogNode, which may contain more LogNodes.
+	Nodes that require animation are also placed in a Set, and every animation frame those are
+	fetched and stepped through.
+	*/
 class Log {
 	MAX_LINES = 20;
 	nodesToAnimate: Set<LogNode>;
@@ -68,17 +70,12 @@ class Log {
 		printLine(Log.getAppPrompt(), this.currentInput);
 	}
 
-	//Prints stuff to the page only if changes have been made i.e. if dirty
 	drawLog() {
-		// if (!this.dirty) {
-		// 	return;
-		// }
-
 		let output = "";
 		for (let i = 0; i < this.nodesArray.length; i++) {
 			output += "<div>" + this.nodesArray[i].toString() + "</div>";
 		}
-		output += "<div>" + Log.getAppPrompt() + this.currentInput + "</div>";
+		output += "<div>" + Log.getAppPrompt() + cursor.currentInputWithCursor() + "</div>";	//todo
 		(document.getElementById('cmd') as HTMLElement).innerHTML = output;
 	}
 
@@ -102,8 +99,9 @@ export class LogNode {
 	toAnimate: boolean;
 	str: string | undefined;
 	children: LogNode[] | undefined;
-	log: Log;	//So that the app.prompt() can be marked dirty and propagate that change to the entire log.
+	log: Log;	//Currently unused. Was used for marking dirty.
 	colour: Colour | undefined;
+	backgroundColour: Colour | undefined;
 	parent: LogNode | undefined;
 	animationType: AnimationType | undefined;
 
@@ -140,11 +138,11 @@ export class LogNode {
 		}
 	}
 
+	/* If str has content or there are children with content, wrap with styles if any
+		If not, if this is a top-level node, return <br /> or else return ""
+	 */
 	toString() {
 		let output = "";
-		if (this.colour !== undefined) {
-			output += `<span style = color:${this.colour.raw}>`;
-		}
 		if (this.str !== undefined) {
 			output += this.str;
 		}
@@ -153,26 +151,134 @@ export class LogNode {
 				output += this.children![i].toString();
 			}
 		}
-		if (this.colour !== undefined) {
-			output += "</span>";
-		}
+
 		if (output.length === 0) {
-			output = "<br />";
+			if (this.parent === undefined) {
+				return "<br />";
+			}
+			else {
+				return "";
+			}
+		}
+
+		let styles: string[] = [];
+		if (this.colour !== undefined) {
+			styles.push(`color:${this.colour.raw}`);
+		}
+		if (this.backgroundColour !== undefined) {
+			styles.push(`background-color:${this.backgroundColour.raw}`);
+		}
+		if (styles.length > 0) {
+			output = `<span style = ${styles.join(";")}>${output}</span>`;
 		}
 		return output;
 	}
 }
 
+/*	Left/right cursor keys move cursor pos left/right, limited to 0 <= i <= l
+	Cursor index is normally 0... or rather, l.
+	Entering a letter: letter is inserted at i. i++
+	Backspace: [i-1] removed, i--
+	Delete: if i < l, remove [i]. i unchanged.
+	Blinking:
+		If on and delay is >=1000ms, turn off
+		On interact(move/input/delete/backspace), time since last input is set to 0ms, turn on
+		If off and delay is >=1000ms, turn on
+	*/
+class Cursor {
+	i = 0;
+	delay = 0;
+	toggle = true;
+	static BLINK_DELAY = 500;
+	backgroundColour: Colour;
+	textColour: Colour;
+
+	constructor() {
+		this.backgroundColour =
+			new Colour(window.getComputedStyle(document.getElementById("cmd")!).backgroundColor);
+		this.textColour =
+			new Colour(window.getComputedStyle(document.getElementById("cmd")!).color);
+		console.log(this.backgroundColour);
+		console.log(this.textColour);
+	}
+
+	tryMoveLeft() {
+		if (this.i <= 0) {
+			this.i = 0;
+		}
+		else {
+			this.i--;
+		}
+	}
+
+	tryMoveRight() {
+		if (this.i >= log.currentInput.length) {
+			this.i = log.currentInput.length;
+		}
+		else {
+			this.i++;
+		}
+	}
+
+	currentInputWithCursor(): LogNode {
+		let nodes: LogNode[] = [];
+		if (log.currentInput.length > 1) {	//Node left of cursor, if any
+			nodes.push(new LogNode(log.currentInput.substring(0, this.i)));
+		}
+
+		let cursorNode;
+		if (this.i >= log.currentInput.length) {	//Cursor node
+			cursorNode = new LogNode(" ");
+		}
+		else {
+			cursorNode = new LogNode(log.currentInput.substring(this.i, this.i + 1));
+		}
+		cursorNode.colour = this.getTextColour();
+		cursorNode.backgroundColour = this.getBackgroundColour();
+		nodes.push(cursorNode);
+
+		if (this.i < log.currentInput.length - 1) { //Node right of cursor, if any
+			nodes.push(new LogNode(log.currentInput.substring(this.i + 1)));
+		}
+		return new LogNode(nodes);
+	}
+
+	private getTextColour() {
+		return this.toggle ? this.backgroundColour : undefined;
+	}
+
+	private getBackgroundColour() {
+		return this.toggle ? this.textColour : undefined;
+	}
+
+	private interact() {
+		this.delay = 0;
+		this.toggle = true;
+	}
+
+	step() {
+		if (this.delay >= Cursor.BLINK_DELAY) {
+			this.toggle = !this.toggle;
+			this.delay = 0;
+		}
+		else {
+			this.delay += FRAME_DELAY;
+		}
+	}
+}
+
+const cursor: Cursor = new Cursor();
+
 /*
 Main script. Handles the log and displaying/highlighting of the log.
 Stores which 'application' is currently running, and fetches the input prefix from them.
  */
-let log: Log = new Log();
+const log: Log = new Log();
 // let cursorPos = 0;
 export let app: Application = new cmd([]);
-let keyState = new KeyState();
+const keyState = new KeyState();
 
-setInterval(refreshScreen, 100);
+setInterval(refreshScreen, FRAME_DELAY);
 
 document.addEventListener('DOMContentLoaded', () => {
 	drawLog();
@@ -188,6 +294,7 @@ document.addEventListener('keydown', (e) => {
 
 function refreshScreen() {
 	log.step();
+	cursor.step();
 	drawLog();
 	app.redraw();	//Refreshes the log
 	checkAndCloseApplication();
