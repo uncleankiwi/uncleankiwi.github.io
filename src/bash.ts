@@ -413,3 +413,12 @@ export function drawLog() {
 	log.drawLog();
 }
 
+export function getCurrentInput() {
+	return log.currentInput;
+}
+
+export function setCurrentInput(s: string) {
+	log.currentInput = s;
+	cursor.i = s.length;
+}
+
