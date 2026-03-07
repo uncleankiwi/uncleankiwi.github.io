@@ -90,6 +90,10 @@ class LinkedCmdList<T> {
 		return this.cursor?.value;
 	}
 
+	resetCursor() {
+		this.cursor = undefined;
+	}
+
 	//Returns only the filled values; unfilled capacity is ignored.
 	toJSON() {
 		let output: T[] = Array(this.currentSize);
@@ -172,6 +176,9 @@ export class cmd extends Application {
 	evaluate(command: string) {
 		let commandArgs = command.split(" ");
 		let saveCommand = true;		//should this command be added to history?
+		this.lastEnteredCommand = undefined;
+		this.commandHistory.resetCursor();
+
 		super.evaluate(commandArgs[0]);
 		if (this.state === ApplicationState.CLOSE) {
 			this.saveCommand(command);
@@ -246,7 +253,11 @@ export class cmd extends Application {
 		return false;
 	}
 
+	//NB: don't save command if it's the same as the commandHistory tail
 	saveCommand(command: string) {
+		if (this.commandHistory.tail?.value === command) {
+			return;
+		}
 		this.commandHistory.add(command);
 		localStorage.setItem(this.applicationName, this.commandHistory.toJSON());
 	}
