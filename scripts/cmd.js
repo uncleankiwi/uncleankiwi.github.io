@@ -3,8 +3,9 @@ Default application loaded by bash.
 Contains a directory of applications that can be loaded.
  */
 import { Application, ApplicationState, wrapColour, wrapCharsWithPastelAndRainbow } from "./helpers.js";
-import { clearLog, printLine } from "./bash.js";
+import { clearLog, getCurrentInput, printLine, setCurrentInput } from "./bash.js";
 import "./help.js";
+import { KeyState } from "./util/KeyState.js";
 /*	A linked list that stores the previous commands. Serializes to and from an array.
     head: first element added
     tail: last element added 	*/
@@ -43,6 +44,34 @@ class LinkedCmdList {
             this.currentSize--;
         }
     }
+    /*	Behaviour: if cursor is undefined, fetches tail.
+    If cursor is defined (i.e. a node is selected)...
+        if there is a previous node, return that
+        if there isn't, return the current node.	 */
+    getPrevious() {
+        if (this.cursor === undefined) {
+            if (this.tail !== undefined) {
+                this.cursor = this.tail;
+            }
+        }
+        else {
+            if (this.cursor.previous !== undefined) {
+                this.cursor = this.cursor.previous;
+            }
+        }
+        return this.cursor?.value;
+    }
+    /*	Behaviour: if cursor is undefined, do nothing.
+    If cursor is defined (i.e. a node is selected)...
+        if there is a next node, return that
+        if there isn't, set cursor to it anyway and return *undefined*
+        Note the differences with previous().	 */
+    getNext() {
+        if (this.cursor !== undefined) {
+            this.cursor = this.cursor.next;
+        }
+        return this.cursor?.value;
+    }
     //Returns only the filled values; unfilled capacity is ignored.
     toJSON() {
         let output = Array(this.currentSize);
@@ -71,11 +100,13 @@ class LinkedCmdListNode {
 }
 /*	Notes about input history storage:
         - Up/down arrows for input history scroll - 20 previous commands
+            Scrolling all the way down should fetch the latest user input before it got replaced by history
         - Entering a command adds it to the tail (even those from history)
             Also stores entire history
         - Opening cmd fetches entire history
         - NB: `exit` is stored
-        - NB: spamming enter doesn't store; invalid commands do store	*/
+        - NB: spamming enter doesn't store; invalid commands do store
+        - NB: editing a command fetched from history won't edit that stored command, unlike the real thing */
 export class cmd extends Application {
     constructor(args) {
         super(args);
@@ -84,11 +115,9 @@ export class cmd extends Application {
         this.commandArgs = [];
         let storedCommands = localStorage.getItem(this.applicationName);
         if (!storedCommands) {
-            console.log("no history stored"); //todo rm
             this.commandHistory = new LinkedCmdList(cmd.COMMANDS_TO_REMEMBER);
         }
         else {
-            console.log(storedCommands); //todo rm
             this.commandHistory = new LinkedCmdList(cmd.COMMANDS_TO_REMEMBER, JSON.parse(storedCommands));
         }
     }
@@ -98,6 +127,7 @@ export class cmd extends Application {
         let saveCommand = true; //should this command be added to history?
         super.evaluate(commandArgs[0]);
         if (this.state === ApplicationState.CLOSE) {
+            this.saveCommand(command);
             return;
         }
         if (cmd.directory.has(commandArgs[0])) {
@@ -125,8 +155,7 @@ export class cmd extends Application {
             }
         }
         if (saveCommand) {
-            this.commandHistory.add(command);
-            localStorage.setItem(this.applicationName, this.commandHistory.toJSON());
+            this.saveCommand(command);
         }
     }
     redraw() {
@@ -134,6 +163,39 @@ export class cmd extends Application {
     }
     prompt() {
         return [wrapColour(this.user, '#55cc33'), ':', wrapColour(this.path, '#5566ee'), '$ '];
+    }
+    onKeyDown(keyState, e) {
+        if (e.key === "ArrowUp") {
+            let prev = this.commandHistory.getPrevious();
+            if (prev !== undefined) {
+                if (this.lastEnteredCommand === undefined) {
+                    this.lastEnteredCommand = getCurrentInput();
+                }
+                setCurrentInput(prev);
+            }
+            return true;
+        }
+        else if (e.key === "ArrowDown") {
+            //lastEnteredCommand already displaying
+            if (this.lastEnteredCommand === undefined) {
+                return true;
+            }
+            //going to a more recent command, or to lastEnteredCommand
+            let next = this.commandHistory.getNext();
+            if (next !== undefined) {
+                setCurrentInput(next);
+            }
+            else {
+                setCurrentInput(this.lastEnteredCommand);
+                this.lastEnteredCommand = undefined;
+            }
+            return true;
+        }
+        return false;
+    }
+    saveCommand(command) {
+        this.commandHistory.add(command);
+        localStorage.setItem(this.applicationName, this.commandHistory.toJSON());
     }
 }
 cmd.applicationName = "cmd";
